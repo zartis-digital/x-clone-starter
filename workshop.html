@@ -1,0 +1,4415 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Claude Code Labs — X Clone Workshop</title>
+    <style>
+      /* ============================================================
+       CSS Variables & Reset
+       ============================================================ */
+      :root {
+        --primary: #cc785c;
+        --primary-light: #e0977f;
+        --primary-dark: #a85f47;
+        --primary-bg: #fdf5f2;
+        --primary-border: #f0d5c8;
+        --success: #5c8a5e;
+        --success-light: #7aab7c;
+        --success-bg: #f0f7f0;
+        --success-border: #c8e0c9;
+        --warning: #b07d3a;
+        --warning-light: #c99b5c;
+        --warning-bg: #fdf6ec;
+        --warning-border: #e8d5b3;
+        --bonus: #7c6bbf;
+        --bonus-light: #9b8ed4;
+        --bonus-bg: #f4f1fb;
+        --bonus-border: #d4cce9;
+        --bg: #ffffff;
+        --bg-secondary: #f8f9fa;
+        --bg-card: #ffffff;
+        --bg-code: #f5f5f5;
+        --text: #1a1a1a;
+        --text-secondary: #5a5a5a;
+        --text-muted: #8a8a8a;
+        --border: #e2e2e2;
+        --border-light: #f0f0f0;
+        --shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+        --shadow-md:
+          0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
+        --shadow-lg:
+          0 8px 24px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.05);
+        --radius: 10px;
+        --radius-sm: 6px;
+        --font-sans:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+          Arial, sans-serif;
+        --font-mono:
+          "SF Mono", "Cascadia Code", "Fira Code", Consolas, monospace;
+        --transition-fast: 0.15s ease;
+        --transition: 0.25s ease;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --primary-bg: #2a1f1a;
+          --primary-border: #5a3f30;
+          --success-bg: #1a2a1a;
+          --success-border: #305a32;
+          --warning-bg: #2a2418;
+          --warning-border: #5a4a28;
+          --bonus-bg: #1e1a2a;
+          --bonus-border: #3a305a;
+          --bg: #141414;
+          --bg-secondary: #1a1a1a;
+          --bg-card: #1e1e1e;
+          --bg-code: #252525;
+          --text: #e8e8e8;
+          --text-secondary: #aaaaaa;
+          --text-muted: #6a6a6a;
+          --border: #333333;
+          --border-light: #282828;
+          --shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 1px 2px rgba(0, 0, 0, 0.15);
+          --shadow-md:
+            0 4px 12px rgba(0, 0, 0, 0.25), 0 2px 4px rgba(0, 0, 0, 0.15);
+          --shadow-lg:
+            0 8px 24px rgba(0, 0, 0, 0.3), 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html {
+        scroll-behavior: smooth;
+        -webkit-text-size-adjust: 100%;
+      }
+
+      body {
+        font-family: var(--font-sans);
+        background: var(--bg-secondary);
+        color: var(--text);
+        line-height: 1.6;
+        min-height: 100vh;
+      }
+
+      /* ============================================================
+       Header
+       ============================================================ */
+      .header {
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        padding: 24px 0 20px;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        box-shadow: var(--shadow);
+      }
+
+      .header-inner {
+        max-width: 880px;
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+
+      .header-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 16px;
+      }
+
+      .header-title-group {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .header-title {
+        font-size: 1.35rem;
+        font-weight: 700;
+        color: var(--text);
+        letter-spacing: -0.02em;
+      }
+
+      .header-subtitle {
+        font-size: 0.95rem;
+        color: var(--text-secondary);
+        font-weight: 400;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-size: 0.72rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        background: var(--primary);
+        color: #fff;
+      }
+
+      .badge.badge-muted {
+        background: var(--text-muted);
+      }
+
+      .badge.badge-bonus {
+        background: var(--bonus);
+      }
+
+      .reset-btn {
+        background: none;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 6px 14px;
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+        cursor: pointer;
+        transition: all var(--transition-fast);
+        font-family: var(--font-sans);
+      }
+
+      .reset-btn:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+        background: var(--primary-bg);
+      }
+
+      .progress-area {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .progress-bar-track {
+        flex: 1;
+        height: 6px;
+        background: var(--border-light);
+        border-radius: 3px;
+        overflow: hidden;
+      }
+
+      .progress-bar-fill {
+        height: 100%;
+        background: var(--primary);
+        border-radius: 3px;
+        transition: width 0.4s ease;
+        width: 0%;
+      }
+
+      .progress-text {
+        font-size: 0.82rem;
+        color: var(--text-muted);
+        white-space: nowrap;
+        font-weight: 500;
+        min-width: 100px;
+        text-align: right;
+      }
+
+      /* ============================================================
+       Main Container
+       ============================================================ */
+      .container {
+        max-width: 880px;
+        margin: 0 auto;
+        padding: 32px 24px 80px;
+      }
+
+      /* ============================================================
+       Getting Started Section
+       ============================================================ */
+      .getting-started {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 32px;
+        margin-bottom: 40px;
+        box-shadow: var(--shadow);
+      }
+
+      .getting-started h2 {
+        font-size: 1.3rem;
+        font-weight: 700;
+        margin-bottom: 24px;
+        letter-spacing: -0.01em;
+      }
+
+      .getting-started h3 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 12px;
+        color: var(--text);
+      }
+
+      .getting-started p,
+      .getting-started li {
+        color: var(--text-secondary);
+        font-size: 0.92rem;
+        line-height: 1.7;
+      }
+
+      .getting-started ul {
+        list-style: disc;
+        padding-left: 24px;
+        margin-bottom: 8px;
+      }
+
+      .getting-started ul li {
+        margin-bottom: 4px;
+      }
+
+      .prereq-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        margin-top: 16px;
+      }
+
+      @media (max-width: 640px) {
+        .prereq-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .prereq-card {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-light);
+        border-radius: var(--radius-sm);
+        padding: 20px;
+      }
+
+      .prereq-card h4 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-bottom: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--primary);
+      }
+
+      .tech-stack-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 8px;
+        margin-top: 8px;
+      }
+
+      .tech-item {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-light);
+        border-radius: var(--radius-sm);
+        padding: 8px 12px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        font-weight: 500;
+      }
+
+      .project-structure {
+        background: var(--bg-code);
+        border: 1px solid var(--border-light);
+        border-radius: var(--radius-sm);
+        padding: 16px 20px;
+        font-family: var(--font-mono);
+        font-size: 0.82rem;
+        line-height: 1.8;
+        color: var(--text-secondary);
+        overflow-x: auto;
+        margin-top: 8px;
+        white-space: pre;
+      }
+
+      .important-note {
+        background: var(--warning-bg);
+        border: 1px solid var(--warning-border);
+        border-radius: var(--radius-sm);
+        padding: 14px 18px;
+        margin-top: 20px;
+        font-size: 0.88rem;
+        color: var(--text);
+      }
+
+      .important-note strong {
+        color: var(--warning);
+      }
+
+      /* ============================================================
+       Part Headers (section dividers)
+       ============================================================ */
+      .part-header {
+        margin-top: 48px;
+        margin-bottom: 28px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid var(--border);
+      }
+
+      .part-header h2 {
+        font-size: 1.15rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--primary);
+      }
+
+      .part-header p {
+        font-size: 0.92rem;
+        color: var(--text-secondary);
+        margin-top: 6px;
+        line-height: 1.6;
+      }
+
+      .info-card {
+        background: var(--primary-bg);
+        border: 1px solid var(--primary-border);
+        border-radius: var(--radius-sm);
+        padding: 16px 20px;
+        margin-bottom: 24px;
+        font-size: 0.88rem;
+        color: var(--text);
+        line-height: 1.6;
+      }
+
+      .info-card strong {
+        color: var(--primary);
+      }
+
+      .info-card code {
+        font-family: var(--font-mono);
+        font-size: 0.82rem;
+        background: var(--bg-code);
+        padding: 2px 6px;
+        border-radius: 3px;
+      }
+
+      /* ============================================================
+       TBD / Placeholder Card
+       ============================================================ */
+      .tbd-card {
+        background: var(--bg-card);
+        border: 2px dashed var(--border);
+        border-radius: var(--radius);
+        padding: 28px 32px;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      .tbd-card h3 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+        margin-bottom: 8px;
+      }
+
+      .tbd-card p {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        line-height: 1.7;
+        max-width: 520px;
+        margin: 0 auto;
+      }
+
+      .tbd-card .badge {
+        margin-bottom: 14px;
+      }
+
+      /* ============================================================
+       Step Cards
+       ============================================================ */
+      .step-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        margin-bottom: 20px;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        transition: border-color var(--transition);
+      }
+
+      .step-card.completed {
+        border-color: var(--success);
+      }
+
+      .step-card.completed .step-header {
+        border-left: 3px solid var(--success);
+      }
+
+      .step-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 24px;
+        cursor: pointer;
+        user-select: none;
+        transition: background var(--transition-fast);
+        border-left: 3px solid transparent;
+      }
+
+      .step-header:hover {
+        background: var(--bg-secondary);
+      }
+
+      .step-header-left {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        flex: 1;
+        min-width: 0;
+      }
+
+      .step-number {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: var(--primary-bg);
+        color: var(--primary);
+        font-size: 0.82rem;
+        font-weight: 700;
+        flex-shrink: 0;
+        transition: all var(--transition-fast);
+      }
+
+      .step-card.completed .step-number {
+        background: var(--success);
+        color: #fff;
+      }
+
+      .step-title-group {
+        min-width: 0;
+      }
+
+      .step-title {
+        font-size: 1.02rem;
+        font-weight: 600;
+        color: var(--text);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .step-desc {
+        font-size: 0.82rem;
+        color: var(--text-muted);
+        margin-top: 2px;
+      }
+
+      .step-header-right {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-shrink: 0;
+      }
+
+      .step-time {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        font-weight: 500;
+        white-space: nowrap;
+      }
+
+      .chevron {
+        width: 20px;
+        height: 20px;
+        color: var(--text-muted);
+        transition: transform var(--transition);
+        flex-shrink: 0;
+      }
+
+      .step-card.expanded .chevron {
+        transform: rotate(180deg);
+      }
+
+      .step-body {
+        display: none;
+        padding: 0 24px 24px 24px;
+        border-top: 1px solid var(--border-light);
+      }
+
+      .step-card.expanded .step-body {
+        display: block;
+      }
+
+      .step-body > p,
+      .step-body > .step-section > p {
+        font-size: 0.92rem;
+        color: var(--text-secondary);
+        line-height: 1.7;
+        margin-top: 16px;
+      }
+
+      .step-body ol {
+        margin-top: 16px;
+        padding-left: 0;
+        list-style: none;
+      }
+
+      .step-body ol > li {
+        margin-bottom: 24px;
+        position: relative;
+      }
+
+      .step-body ol > li > strong {
+        display: block;
+        font-size: 0.95rem;
+        color: var(--text);
+        margin-bottom: 8px;
+      }
+
+      .step-body ol > li > p,
+      .step-section p {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        line-height: 1.7;
+        margin-bottom: 10px;
+      }
+
+      .step-section {
+        margin-top: 20px;
+      }
+
+      .step-section-title {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--text);
+        margin-bottom: 10px;
+      }
+
+      /* ============================================================
+       Prompt Boxes
+       ============================================================ */
+      .prompt-box {
+        position: relative;
+        margin: 12px 0 16px;
+        background: var(--bg-code);
+        border: 1px solid var(--border-light);
+        border-radius: var(--radius-sm);
+        overflow: hidden;
+      }
+
+      .prompt-label {
+        display: inline-block;
+        padding: 4px 12px;
+        font-size: 0.68rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--text-muted);
+        background: var(--border-light);
+        border-bottom-right-radius: var(--radius-sm);
+      }
+
+      .prompt-content {
+        padding: 14px 60px 14px 16px;
+        font-family: var(--font-mono);
+        font-size: 0.84rem;
+        line-height: 1.7;
+        color: var(--text);
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+
+      .copy-btn {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 4px 10px;
+        font-size: 0.72rem;
+        color: var(--text-muted);
+        cursor: pointer;
+        transition: all var(--transition-fast);
+        font-family: var(--font-sans);
+      }
+
+      .copy-btn:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+      }
+
+      .copy-btn.copied {
+        background: var(--success);
+        border-color: var(--success);
+        color: #fff;
+      }
+
+      /* ============================================================
+       Callout Boxes
+       ============================================================ */
+      .callout {
+        display: flex;
+        gap: 12px;
+        margin: 14px 0;
+        padding: 14px 16px;
+        background: var(--warning-bg);
+        border: 1px solid var(--warning-border);
+        border-radius: var(--radius-sm);
+        font-size: 0.87rem;
+        color: var(--text);
+        line-height: 1.6;
+      }
+
+      .callout-icon {
+        flex-shrink: 0;
+        width: 20px;
+        height: 20px;
+        margin-top: 1px;
+      }
+
+      .callout code {
+        font-family: var(--font-mono);
+        font-size: 0.8rem;
+        background: var(--bg-code);
+        padding: 1px 5px;
+        border-radius: 3px;
+      }
+
+      /* ============================================================
+       Hints (details/summary)
+       ============================================================ */
+      .hint {
+        margin: 14px 0;
+        border: 1px solid var(--border-light);
+        border-radius: var(--radius-sm);
+        overflow: hidden;
+      }
+
+      .hint summary {
+        padding: 10px 16px;
+        font-size: 0.86rem;
+        font-weight: 500;
+        color: var(--text-secondary);
+        cursor: pointer;
+        background: var(--bg-secondary);
+        transition: background var(--transition-fast);
+        list-style: none;
+      }
+
+      .hint summary::-webkit-details-marker {
+        display: none;
+      }
+
+      .hint summary::before {
+        content: "\25B6";
+        font-size: 0.65rem;
+        margin-right: 8px;
+        display: inline-block;
+        transition: transform var(--transition-fast);
+      }
+
+      .hint[open] summary::before {
+        transform: rotate(90deg);
+      }
+
+      .hint summary:hover {
+        background: var(--border-light);
+      }
+
+      .hint-content {
+        padding: 14px 16px;
+        font-size: 0.87rem;
+        color: var(--text-secondary);
+        line-height: 1.7;
+      }
+
+      .hint-content code {
+        font-family: var(--font-mono);
+        font-size: 0.8rem;
+        background: var(--bg-code);
+        padding: 1px 5px;
+        border-radius: 3px;
+      }
+
+      .hint-content ul {
+        list-style: disc;
+        padding-left: 20px;
+        margin-top: 6px;
+      }
+
+      .hint-content ul li {
+        margin-bottom: 4px;
+      }
+
+      /* ============================================================
+       Interactive Checklists
+       ============================================================ */
+      .checklist {
+        margin: 20px 0 8px;
+        list-style: none;
+        padding: 0;
+      }
+
+      .checklist li {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 14px;
+        margin-bottom: 4px;
+        border-radius: var(--radius-sm);
+        font-size: 0.88rem;
+        color: var(--text-secondary);
+        cursor: pointer;
+        transition: background var(--transition-fast);
+        user-select: none;
+      }
+
+      .checklist li:hover {
+        background: var(--bg-secondary);
+      }
+
+      .checklist li::before {
+        content: "";
+        width: 18px;
+        height: 18px;
+        border: 2px solid var(--border);
+        border-radius: 4px;
+        flex-shrink: 0;
+        transition: all var(--transition-fast);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .checklist li.checked::before {
+        background: var(--success);
+        border-color: var(--success);
+        content: "";
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12l5 5L20 7'/%3E%3C/svg%3E");
+        background-size: 12px;
+        background-repeat: no-repeat;
+        background-position: center;
+      }
+
+      .checklist li.checked {
+        color: var(--success);
+        text-decoration: line-through;
+        text-decoration-color: var(--success-border);
+      }
+
+      /* ============================================================
+       Mark Complete Button
+       ============================================================ */
+      .complete-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 20px;
+        padding: 10px 22px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        background: var(--bg);
+        color: var(--text);
+        font-size: 0.88rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all var(--transition-fast);
+        font-family: var(--font-sans);
+      }
+
+      .complete-btn:hover {
+        border-color: var(--success);
+        background: var(--success-bg);
+        color: var(--success);
+      }
+
+      .complete-btn.is-completed {
+        background: var(--success);
+        border-color: var(--success);
+        color: #fff;
+      }
+
+      .complete-btn.is-completed:hover {
+        background: var(--success-light);
+        border-color: var(--success-light);
+        color: #fff;
+      }
+
+      /* ============================================================
+       Cheat Sheet Modal
+       ============================================================ */
+      .modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+      }
+
+      .modal-overlay.open {
+        display: flex;
+      }
+
+      .modal {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-lg);
+        max-width: 620px;
+        width: 100%;
+        max-height: 80vh;
+        overflow-y: auto;
+      }
+
+      .modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px 24px;
+        border-bottom: 1px solid var(--border-light);
+      }
+
+      .modal-header h2 {
+        font-size: 1.1rem;
+        font-weight: 700;
+      }
+
+      .modal-close {
+        background: none;
+        border: none;
+        font-size: 1.4rem;
+        color: var(--text-muted);
+        cursor: pointer;
+        padding: 4px;
+        line-height: 1;
+        transition: color var(--transition-fast);
+      }
+
+      .modal-close:hover {
+        color: var(--text);
+      }
+
+      .modal-body {
+        padding: 20px 24px 24px;
+      }
+
+      .cheat-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .cheat-table th {
+        text-align: left;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--text-muted);
+        padding: 8px 12px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .cheat-table td {
+        padding: 10px 12px;
+        font-size: 0.87rem;
+        border-bottom: 1px solid var(--border-light);
+      }
+
+      .cheat-table td:first-child {
+        font-family: var(--font-mono);
+        font-size: 0.82rem;
+        color: var(--primary);
+        white-space: nowrap;
+      }
+
+      .cheat-table td:last-child {
+        color: var(--text-secondary);
+      }
+
+      .modal-hint {
+        margin-top: 16px;
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        text-align: center;
+      }
+
+      .modal-hint kbd {
+        display: inline-block;
+        padding: 2px 6px;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+        border-radius: 3px;
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+      }
+
+      /* ============================================================
+       Scroll-to-Top Button
+       ============================================================ */
+      .scroll-top {
+        display: none;
+        position: fixed;
+        bottom: 28px;
+        right: 28px;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: var(--primary);
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        box-shadow: var(--shadow-md);
+        align-items: center;
+        justify-content: center;
+        z-index: 50;
+        transition: all var(--transition-fast);
+      }
+
+      .scroll-top:hover {
+        background: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+      }
+
+      .scroll-top.visible {
+        display: flex;
+      }
+
+      .scroll-top svg {
+        width: 20px;
+        height: 20px;
+      }
+
+      /* ============================================================
+       Inline code styling
+       ============================================================ */
+      .step-body
+        code:not(.prompt-content code):not(.callout code):not(
+          .hint-content code
+        ):not(.info-card code) {
+        font-family: var(--font-mono);
+        font-size: 0.82rem;
+        background: var(--bg-code);
+        padding: 2px 6px;
+        border-radius: 3px;
+        color: var(--primary-dark);
+      }
+
+      @media (prefers-color-scheme: dark) {
+        .step-body
+          code:not(.prompt-content code):not(.callout code):not(
+            .hint-content code
+          ):not(.info-card code) {
+          color: var(--primary-light);
+        }
+      }
+
+      /* ============================================================
+       Responsive
+       ============================================================ */
+      @media (max-width: 640px) {
+        .header-inner {
+          padding: 0 16px;
+        }
+
+        .header-title {
+          font-size: 1.15rem;
+        }
+
+        .header-subtitle {
+          display: none;
+        }
+
+        .container {
+          padding: 20px 16px 60px;
+        }
+
+        .getting-started {
+          padding: 20px;
+        }
+
+        .step-header {
+          padding: 14px 16px;
+        }
+
+        .step-body {
+          padding: 0 16px 20px;
+        }
+
+        .step-title {
+          font-size: 0.92rem;
+        }
+
+        .step-time {
+          display: none;
+        }
+
+        .prompt-content {
+          font-size: 0.78rem;
+          padding: 12px 50px 12px 14px;
+        }
+      }
+
+      /* ============================================================
+       Selection & Focus
+       ============================================================ */
+      ::selection {
+        background: var(--primary);
+        color: #fff;
+      }
+
+      button:focus-visible,
+      summary:focus-visible {
+        outline: 2px solid var(--primary);
+        outline-offset: 2px;
+      }
+
+      /* ============================================================
+       Keyboard shortcut hint
+       ============================================================ */
+      .keyboard-hint {
+        position: fixed;
+        bottom: 28px;
+        left: 28px;
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        z-index: 50;
+      }
+
+      .keyboard-hint kbd {
+        display: inline-block;
+        padding: 2px 7px;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        font-family: var(--font-mono);
+        font-size: 0.72rem;
+        box-shadow: 0 1px 0 var(--border);
+      }
+
+      @media (max-width: 640px) {
+        .keyboard-hint {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ============================================================
+       Header
+       ============================================================ -->
+    <header class="header">
+      <div class="header-inner">
+        <div class="header-top">
+          <div class="header-title-group">
+            <h1 class="header-title">Claude Code Labs</h1>
+            <span class="header-subtitle">Build an X Clone</span>
+            <span class="badge">Workshop</span>
+          </div>
+          <button
+            class="reset-btn"
+            onclick="resetProgress()"
+            aria-label="Reset progress"
+          >
+            Reset Progress
+          </button>
+        </div>
+        <div class="progress-area">
+          <div class="progress-bar-track">
+            <div class="progress-bar-fill" id="progressFill"></div>
+          </div>
+          <span class="progress-text" id="progressText">0 completed</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- ============================================================
+       Main Content
+       ============================================================ -->
+    <main class="container">
+      <!-- Getting Started -->
+      <section class="getting-started">
+        <h2>Getting Started</h2>
+
+        <div class="prereq-grid">
+          <div class="prereq-card">
+            <h4>Prerequisites</h4>
+            <ul>
+              <li>Node.js 20+</li>
+              <li>
+                <a href="https://pnpm.io/installation" target="_blank"
+                  >pnpm</a
+                >
+                9+ installed globally
+              </li>
+              <li>Git</li>
+              <li>
+                <a
+                  href="https://docs.anthropic.com/en/docs/claude-code"
+                  target="_blank"
+                  >Claude Code</a
+                >
+                CLI
+              </li>
+            </ul>
+          </div>
+          <div class="prereq-card">
+            <h4>Tech Stack</h4>
+            <div class="tech-stack-grid">
+              <span class="tech-item">React 19</span>
+              <span class="tech-item">Vite</span>
+              <span class="tech-item">TanStack Router</span>
+              <span class="tech-item">TanStack Query</span>
+              <span class="tech-item">Tailwind CSS v4</span>
+              <span class="tech-item">shadcn/ui</span>
+              <span class="tech-item">better-auth</span>
+            </div>
+          </div>
+        </div>
+
+        <h3>Setup</h3>
+        <div class="prompt-box">
+          <span class="prompt-label">Terminal</span>
+          <button class="copy-btn" onclick="copyText(this)">Copy</button>
+          <div class="prompt-content">
+            git clone https://github.com/zartis-digital/x-clone-starter
+            cd x-clone-starter/src/frontend
+            pnpm install
+          </div>
+        </div>
+
+        <h3>Environment Variables</h3>
+        <p>
+          <code>src/frontend/.env</code> is already committed with
+          <code>VITE_API_URL</code> pointing at the workshop API — nothing
+          to set up. Only edit it if you're told to point at a different
+          API.
+        </p>
+        <div class="callout">
+          <svg
+            class="callout-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path
+              d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z"
+            />
+            <line x1="9" y1="21" x2="15" y2="21" />
+          </svg>
+          <span
+            >The backend API is already deployed and fully functional —
+            there's nothing to run or configure locally besides the
+            frontend. There's no separate storage URL to configure either:
+            the API already returns full, ready-to-use image URLs, so the
+            frontend never builds one itself.</span
+          >
+        </div>
+
+        <p>Then start the dev server:</p>
+        <div class="prompt-box">
+          <span class="prompt-label">Terminal</span>
+          <button class="copy-btn" onclick="copyText(this)">Copy</button>
+          <div class="prompt-content">pnpm dev</div>
+        </div>
+        <p>
+          App runs at <code>http://localhost:5173</code>. Launch Claude Code
+          with <code>claude</code> from the repository root
+          (<code>x-clone-starter/</code>, where <code>CLAUDE.md</code>
+          lives), not from <code>src/frontend</code>.
+        </p>
+
+        <h3>Project Structure</h3>
+        <div class="project-structure">
+          x-clone-starter/
+            CLAUDE.md
+            README.md
+            workshop.html
+            src/
+              frontend/     &#8592; the app you'll work on
+                src/
+                  routes/     &#8592; File-based routing (TanStack Router)
+                  components/
+                    ui/       &#8592; shadcn/ui primitives
+                  hooks/      &#8592; Custom hooks
+                  lib/        &#8592; Auth client, formatting, session query
+                  stores/     &#8592; Client-side state
+        </div>
+
+        <div class="important-note">
+          <strong>Important:</strong> The backend API is already deployed and
+          fully functional. You only work on the frontend during this
+          workshop.
+        </div>
+      </section>
+
+      <!-- ============================================================
+         PART 1
+         ============================================================ -->
+      <div class="part-header">
+        <h2>Part 1: Setting Up Claude Code</h2>
+        <p>
+          Get familiar with Claude Code, configure your project context, and
+          learn the key workflows. (~60 min)
+        </p>
+      </div>
+
+      <!-- Step 1 -->
+      <article class="step-card" data-feature="1">
+        <div class="step-header" onclick="toggleCard(this.parentElement)">
+          <div class="step-header-left">
+            <span class="step-number">1</span>
+            <div class="step-title-group">
+              <div class="step-title">
+                Foundation &mdash; Install &amp; First Commands
+              </div>
+              <div class="step-desc">
+                Get Claude Code running and explore the project
+              </div>
+            </div>
+          </div>
+          <div class="step-header-right">
+            <span class="step-time">~10 min</span>
+            <svg
+              class="chevron"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </div>
+        </div>
+        <div class="step-body">
+          <ol>
+            <li>
+              <strong>Launch Claude Code</strong>
+              <div class="prompt-box">
+                <span class="prompt-label">Terminal</span>
+                <button class="copy-btn" onclick="copyText(this)">Copy</button>
+                <div class="prompt-content">
+                  cd x-clone-starter
+                  claude
+                </div>
+              </div>
+            </li>
+            <li>
+              <strong>Set the model</strong> &mdash; Make sure you're using
+              the best model:
+              <div class="prompt-box">
+                <span class="prompt-label">Claude Code</span>
+                <button class="copy-btn" onclick="copyText(this)">Copy</button>
+                <div class="prompt-content">/model</div>
+              </div>
+            </li>
+            <li>
+              <strong>Initialize the project</strong> &mdash; Let Claude
+              understand the codebase:
+              <div class="prompt-box">
+                <span class="prompt-label">Claude Code</span>
+                <button class="copy-btn" onclick="copyText(this)">Copy</button>
+                <div class="prompt-content">/init</div>
+              </div>
+              <div class="callout">
+                <svg
+                  class="callout-icon"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z"
+                  />
+                  <line x1="9" y1="21" x2="15" y2="21" />
+                </svg>
+                <span
+                  >This creates a CLAUDE.md file with project context. Claude
+                  will explore your codebase and write a summary of the
+                  architecture, commands, and patterns.</span
+                >
+              </div>
+            </li>
+            <li>
+              <strong>First conversation</strong> &mdash; Ask Claude about the
+              project:
+              <div class="prompt-box">
+                <span class="prompt-label">Prompt</span>
+                <button class="copy-btn" onclick="copyText(this)">Copy</button>
+                <div class="prompt-content">
+                  Explain the architecture of this project. What are the main
+                  directories, key files, and how does data flow from
+                  components to the API?
+                </div>
+              </div>
+            </li>
+          </ol>
+
+          <details class="hint">
+            <summary>Stuck? Click for help</summary>
+            <div class="hint-content">
+              If Claude seems confused about the project structure, make sure
+              you launched <code>claude</code> from the project root
+              directory (where <code>package.json</code> is).
+            </div>
+          </details>
+
+          <ul class="checklist">
+            <li onclick="toggleCheck(this)">
+              Claude Code is installed and authenticated
+            </li>
+            <li onclick="toggleCheck(this)">
+              Running <code>claude</code> opens the CLI interface
+            </li>
+            <li onclick="toggleCheck(this)">
+              <code>/init</code> generated or updated CLAUDE.md
+            </li>
+            <li onclick="toggleCheck(this)">
+              Claude can explain the project architecture
+            </li>
+          </ul>
+
+          <button class="complete-btn" onclick="toggleComplete(this)">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M5 12l5 5L20 7" />
+            </svg>
+            Mark as Completed
+          </button>
+        </div>
+      </article>
+
+      <!-- Step 2 -->
+      <article class="step-card" data-feature="2">
+        <div class="step-header" onclick="toggleCard(this.parentElement)">
+          <div class="step-header-left">
+            <span class="step-number">2</span>
+            <div class="step-title-group">
+              <div class="step-title">Teaching Claude About Your Project</div>
+              <div class="step-desc">
+                Context, rules, and memory &mdash; everything that persists
+                across sessions
+              </div>
+            </div>
+          </div>
+          <div class="step-header-right">
+            <span class="step-time">~15 min</span>
+            <svg
+              class="chevron"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </div>
+        </div>
+        <div class="step-body">
+          <ol>
+            <li>
+              <strong>Read the existing CLAUDE.md</strong>
+              <div class="prompt-box">
+                <span class="prompt-label">Claude Code</span>
+                <button class="copy-btn" onclick="copyText(this)">Copy</button>
+                <div class="prompt-content">
+                  Read the CLAUDE.md file and explain what each section does
+                </div>
+              </div>
+              <p>
+                CLAUDE.md is like a README for Claude. It's loaded at the
+                start of every conversation, giving Claude persistent context
+                about your project's architecture, commands, and patterns.
+              </p>
+            </li>
+            <li>
+              <strong>Key sections to notice</strong>
+              <p>
+                <code>## Stack</code> &mdash; The frameworks and libraries in
+                use.<br />
+                <code>## Structure</code> &amp; <code>## Conventions</code>
+                &mdash; How routes, components, and data fetching connect,
+                and the patterns to follow when adding new code.<br />
+                <code>## Commands</code> &mdash; How to run, build, and lint
+                the project.
+              </p>
+            </li>
+            <li>
+              <strong>Scoped rules</strong> &mdash; Split conventions into
+              modular files under <code>.claude/rules/</code>. Their
+              superpower is <code>paths:</code> frontmatter, which loads a
+              rule only when Claude reads a matching file:
+              <div class="prompt-box">
+                <span class="prompt-label">Prompt</span>
+                <button class="copy-btn" onclick="copyText(this)">Copy</button>
+                <div class="prompt-content">
+                  Create a scoped rule at
+                  .claude/rules/component-conventions.md. Give it YAML
+                  frontmatter with a paths list matching
+                  src/frontend/src/components/**/*.tsx, then a body stating:
+                  always reuse existing primitives from components/ui/
+                  instead of creating new base elements from scratch, and
+                  match existing Tailwind utility-class patterns rather than
+                  custom CSS. That way the rule only loads when Claude works
+                  on a component file.
+                </div>
+              </div>
+              <details class="hint">
+                <summary>What the rule file looks like</summary>
+                <div class="hint-content">
+                  <div class="prompt-box">
+                    <span class="prompt-label"
+                      >.claude/rules/component-conventions.md</span
+                    >
+                    <button class="copy-btn" onclick="copyText(this)">
+                      Copy
+                    </button>
+                    <div class="prompt-content">
+                      ---
+                      paths:
+                        - "src/frontend/src/components/**/*.tsx"
+                      ---
+                      # Component conventions
+                      - Reuse existing primitives from `components/ui/` instead of creating new base elements from scratch.
+                      - Match existing Tailwind utility-class patterns rather than custom CSS.
+                    </div>
+                  </div>
+                </div>
+              </details>
+              <div class="callout">
+                <svg
+                  class="callout-icon"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z"
+                  />
+                  <line x1="9" y1="21" x2="15" y2="21" />
+                </svg>
+                <span
+                  >A rule without <code>paths:</code> loads at launch, like
+                  <code>CLAUDE.md</code>; with <code>paths:</code> it loads
+                  only when Claude reads a matching file &mdash; saving
+                  context. Rules are <strong>guidance</strong>, not
+                  enforcement: reach for a <strong>skill</strong> for
+                  on-demand workflows and a <strong>hook</strong> (Step 5)
+                  when you need a hard guarantee.</span
+                >
+              </div>
+            </li>
+            <li>
+              <strong>Add a custom instruction</strong> &mdash; unlike the
+              scoped rule above, this lives in CLAUDE.md, so it's always on:
+              <div class="prompt-box">
+                <span class="prompt-label">Prompt</span>
+                <button class="copy-btn" onclick="copyText(this)">Copy</button>
+                <div class="prompt-content">
+                  Add this instruction to CLAUDE.md under a new "## Workflow"
+                  section: "Run pnpm lint and fix any TypeScript errors before
+                  considering any task complete, and prefer editing existing
+                  components over creating new ones."
+                </div>
+              </div>
+            </li>
+            <li>
+              <strong>Memory across sessions</strong> &mdash; Claude can carry
+              knowledge from one session to the next. See what's loaded:
+              <div class="prompt-box">
+                <span class="prompt-label">Claude Code</span>
+                <button class="copy-btn" onclick="copyText(this)">Copy</button>
+                <div class="prompt-content">/memory</div>
+              </div>
+              Then ask Claude to remember a project fact &mdash; it saves to
+              its own auto memory:
+              <div class="prompt-box">
+                <span class="prompt-label">Prompt</span>
+                <button class="copy-btn" onclick="copyText(this)">Copy</button>
+                <div class="prompt-content">
+                  Remember that the workshop test account is
+                  cluster-test@x-clone.dev / ClusterTest123!.
+                </div>
+              </div>
+              And confirm it stuck:
+              <div class="prompt-box">
+                <span class="prompt-label">Prompt</span>
+                <button class="copy-btn" onclick="copyText(this)">Copy</button>
+                <div class="prompt-content">
+                  Run /memory, open the auto memory folder, and show me what
+                  you just saved.
+                </div>
+              </div>
+            </li>
+          </ol>
+
+          <details class="hint">
+            <summary>Stuck? Click for help</summary>
+            <div class="hint-content">
+              CLAUDE.md is checked into your repo, so your whole team benefits
+              from the context. Think of it as your team's shared knowledge
+              about the project, written for an AI collaborator.
+            </div>
+          </details>
+
+          <ul class="checklist">
+            <li onclick="toggleCheck(this)">
+              Understand what CLAUDE.md does and why it matters
+            </li>
+            <li onclick="toggleCheck(this)">
+              Created a path-scoped rule in
+              <code>.claude/rules/</code> (with <code>paths:</code>)
+            </li>
+            <li onclick="toggleCheck(this)">
+              Added a custom instruction to CLAUDE.md
+            </li>
+            <li onclick="toggleCheck(this)">
+              Ran <code>/memory</code> and made Claude remember a project fact
+            </li>
+          </ul>
+
+          <button class="complete-btn" onclick="toggleComplete(this)">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M5 12l5 5L20 7" />
+            </svg>
+            Mark as Completed
+          </button>
+        </div>
+      </article>
+
+      <!-- Step 3 -->
+      <article class="step-card" data-feature="3">
+        <div class="step-header" onclick="toggleCard(this.parentElement)">
+          <div class="step-header-left">
+            <span class="step-number">3</span>
+            <div class="step-title-group">
+              <div class="step-title">
+                MCP Configuration &mdash; Supercharging Claude
+              </div>
+              <div class="step-desc">
+                Connect Claude to external tools for browser debugging and
+                documentation
+              </div>
+            </div>
+          </div>
+          <div class="step-header-right">
+            <span class="step-time">~15 min</span>
+            <svg
+              class="chevron"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </div>
+        </div>
+        <div class="step-body">
+          <ol>
+            <li>
+              <strong>What are MCP servers?</strong>
+              <p>
+                MCP (Model Context Protocol) servers give Claude access to
+                external tools &mdash; like a browser, or documentation
+                databases. Think of them as plugins that extend what Claude
+                can do beyond just reading and writing code.
+              </p>
+            </li>
+            <li>
+              <strong>Create .mcp.json</strong> &mdash; Configure two
+              useful MCP servers:
+              <div class="prompt-box">
+                <span class="prompt-label">Prompt</span>
+                <button class="copy-btn" onclick="copyText(this)">Copy</button>
+                <div class="prompt-content">
+                  Add MCP servers for Chrome DevTools (browser debugging) and
+                  Context7 (library documentation). Create the .mcp.json file
+                  in the project root.
+                </div>
+              </div>
+              <p>If you need to write it by hand, this is the shape:</p>
+              <div class="prompt-box">
+                <span class="prompt-label">Filename: .mcp.json</span>
+                <button class="copy-btn" onclick="copyText(this)">Copy</button>
+                <div class="prompt-content">
+                  {
+                    "mcpServers": {
+                      "chrome-devtools": {
+                        "command": "npx",
+                        "args": ["-y", "chrome-devtools-mcp@latest", "--no-usage-statistics"]
+                      },
+                      "context7": {
+                        "command": "npx",
+                        "args": ["-y", "@upstash/context7-mcp"]
+                      }
+                    }
+                  }
+                </div>
+              </div>
+            </li>
+            <li>
+              <strong>Test Chrome DevTools</strong> &mdash; Let Claude see
+              your app:
+              <div class="prompt-box">
+                <span class="prompt-label">Prompt</span>
+                <button class="copy-btn" onclick="copyText(this)">Copy</button>
+                <div class="prompt-content">
+                  Open http://localhost:5173 in the browser and take a
+                  screenshot. Describe what you see.
+                </div>
+              </div>
+              <div class="callout">
+                <svg
+                  class="callout-icon"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z"
+                  />
+                  <line x1="9" y1="21" x2="15" y2="21" />
+                </svg>
+                <span
+                  >Chrome DevTools MCP lets Claude navigate your app, click
+                  buttons, fill forms, and take screenshots. It's incredibly
+                  powerful for testing and debugging UI issues.</span
+                >
+              </div>
+            </li>
+            <li>
+              <strong>Test Context7</strong> &mdash; Look up documentation:
+              <div class="prompt-box">
+                <span class="prompt-label">Prompt</span>
+                <button class="copy-btn" onclick="copyText(this)">Copy</button>
+                <div class="prompt-content">
+                  Use context7 to look up how useMutation works in TanStack
+                  Query. Show me an example of optimistic updates.
+                </div>
+              </div>
+              <div class="callout">
+                <svg
+                  class="callout-icon"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z"
+                  />
+                  <line x1="9" y1="21" x2="15" y2="21" />
+                </svg>
+                <span
+                  >Context7 gives Claude access to up-to-date documentation
+                  for libraries. No more hallucinated APIs &mdash; Claude can
+                  check the actual docs.</span
+                >
+              </div>
+            </li>
+          </ol>
+
+          <details class="hint">
+            <summary>Stuck? Click for help</summary>
+            <div class="hint-content">
+              If MCP servers fail to connect, try restarting Claude Code. MCP
+              servers are started when Claude launches and sometimes need a
+              fresh start.
+            </div>
+          </details>
+
+          <ul class="checklist">
+            <li onclick="toggleCheck(this)">
+              <code>.mcp.json</code> file created with Chrome DevTools and
+              Context7
+            </li>
+            <li onclick="toggleCheck(this)">
+              Claude can take screenshots of the running app
+            </li>
+            <li onclick="toggleCheck(this)">
+              Claude can look up library documentation
+            </li>
+          </ul>
+
+          <button class="complete-btn" onclick="toggleComplete(this)">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M5 12l5 5L20 7" />
+            </svg>
+            Mark as Completed
+          </button>
+        </div>
+      </article>
+
+      <!-- Step 4 -->
+      <article class="step-card" data-feature="4">
+        <div class="step-header" onclick="toggleCard(this.parentElement)">
+          <div class="step-header-left">
+            <span class="step-number">4</span>
+            <div class="step-title-group">
+              <div class="step-title">
+                Plan Mode &mdash; Think Before You Code
+              </div>
+              <div class="step-desc">
+                Use Plan Mode to design your approach before writing code
+              </div>
+            </div>
+          </div>
+          <div class="step-header-right">
+            <span class="step-time">~10 min</span>
+            <svg
+              class="chevron"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </div>
+        </div>
+        <div class="step-body">
+          <ol>
+            <li>
+              <strong>Enter Plan Mode</strong> &mdash; press
+              <code>Shift+Tab</code> to cycle the mode indicator until it
+              reads <strong>plan mode on</strong>.
+              <p>
+                Plan Mode tells Claude to research and design an approach
+                WITHOUT making any changes. It explores the codebase, reads
+                relevant files, and proposes a step-by-step implementation
+                plan. You review the plan and only then approve it for
+                execution.
+              </p>
+              <div class="callout">
+                <svg
+                  class="callout-icon"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z"
+                  />
+                  <line x1="9" y1="21" x2="15" y2="21" />
+                </svg>
+                <span
+                  >Use it whenever a feature touches 3+ files or involves
+                  non-obvious logic.</span
+                >
+              </div>
+            </li>
+            <li>
+              <strong>Plan a hypothetical feature</strong> &mdash; nothing
+              here gets built for real, this is just to practice the
+              workflow:
+              <div class="prompt-box">
+                <span class="prompt-label">Prompt (in plan mode)</span>
+                <button class="copy-btn" onclick="copyText(this)">Copy</button>
+                <div class="prompt-content">
+                  I want to add a "Bookmarks" feature: a bookmark toggle on
+                  each tweet, and a new route showing everything the current
+                  user has bookmarked. Plan the approach — which files you'd
+                  touch on the frontend, where the bookmarked-state would need
+                  to live, and how the route would fetch the list. Don't write
+                  any code yet.
+                </div>
+              </div>
+            </li>
+            <li>
+              <strong>Review the plan</strong> &mdash; Claude will propose:
+              <p>
+                Which files to modify, what components/hooks to create, and
+                the data flow. Ask questions, request changes, or approve when
+                satisfied.
+              </p>
+            </li>
+            <li>
+              <strong>Exit Plan Mode</strong> &mdash; When you're happy with
+              the plan, approve it. (Pressing <code>Shift+Tab</code> again
+              also leaves plan mode.)
+              <div class="callout">
+                <svg
+                  class="callout-icon"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z"
+                  />
+                  <line x1="9" y1="21" x2="15" y2="21" />
+                </svg>
+                <span
+                  >Once you approve, Claude executes the plan and makes the
+                  actual code changes &mdash; you're welcome to stop before
+                  that step, since this exercise is just for practice.</span
+                >
+              </div>
+            </li>
+          </ol>
+
+          <details class="hint">
+            <summary>Stuck? Click for help</summary>
+            <div class="hint-content">
+              Plan Mode is especially valuable when you're unfamiliar with a
+              codebase. It lets Claude do the research for you and propose an
+              approach you can review before any code is written.
+            </div>
+          </details>
+
+          <ul class="checklist">
+            <li onclick="toggleCheck(this)">Can enter and exit Plan Mode</li>
+            <li onclick="toggleCheck(this)">
+              Claude produced a plan for the Bookmarks example
+            </li>
+            <li onclick="toggleCheck(this)">
+              Understand when to use Plan Mode (complex, multi-file changes)
+            </li>
+          </ul>
+
+          <button class="complete-btn" onclick="toggleComplete(this)">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M5 12l5 5L20 7" />
+            </svg>
+            Mark as Completed
+          </button>
+        </div>
+      </article>
+
+      <!-- Step 5 -->
+      <article class="step-card" data-feature="5">
+        <div class="step-header" onclick="toggleCard(this.parentElement)">
+          <div class="step-header-left">
+            <span class="step-number">5</span>
+            <div class="step-title-group">
+              <div class="step-title">
+                Guardrail Hooks &mdash; Block Risky File Access
+              </div>
+              <div class="step-desc">
+                Stop Claude reading secrets or editing generated files
+              </div>
+            </div>
+          </div>
+          <div class="step-header-right">
+            <span class="step-time">~10 min</span>
+            <svg
+              class="chevron"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </div>
+        </div>
+        <div class="step-body">
+          <p>
+            <strong>Hooks</strong> are commands Claude Code runs
+            <strong>automatically</strong> on lifecycle events, with no model
+            involved. They live in <code>.claude/settings.json</code> and
+            receive a JSON payload on stdin. Before we build anything, let's
+            use them as <strong>guardrails</strong> &mdash; a
+            <code>PreToolUse</code> hook can inspect a tool call and
+            <strong>block it</strong>, giving you a hard guarantee that a
+            scoped rule can't. We'll write them as small
+            <strong>Node scripts</strong> so they run on every machine
+            &mdash; macOS, Linux, and Windows &mdash; with no
+            <code>jq</code> and no shell quirks. (Hooks are also one of the
+            three extension points &mdash; more on that in Part 2.)
+          </p>
+
+          <div class="step-section">
+            <div class="step-section-title">
+              1. PreToolUse &mdash; don't read secrets
+            </div>
+            <div class="prompt-box">
+              <span class="prompt-label">Prompt</span>
+              <button class="copy-btn" onclick="copyText(this)">Copy</button>
+              <div class="prompt-content">
+                First use the claude-code-guide agent to check the
+                documentation on how to create hooks. Then add a PreToolUse
+                hook that blocks Claude from reading secret files like .env,
+                .env.local, and .env.production, with a clear reason &mdash;
+                but still allow the safe .env.example template. Write it as a
+                cross-platform Node script so it runs on macOS, Linux, and
+                Windows.
+              </div>
+            </div>
+          </div>
+
+          <div class="step-section">
+            <div class="step-section-title">
+              2. PreToolUse &mdash; don't write lockfiles or generated files
+            </div>
+            <div class="prompt-box">
+              <span class="prompt-label">Prompt</span>
+              <button class="copy-btn" onclick="copyText(this)">Copy</button>
+              <div class="prompt-content">
+                First use the claude-code-guide agent to check the
+                documentation on how to create hooks. Then add a PreToolUse
+                hook that blocks Claude from editing lockfiles and generated
+                files like src/frontend/pnpm-lock.yaml and
+                src/frontend/src/routeTree.gen.ts, with a reason explaining
+                it's a lockfile or a generated file. Write it as a
+                cross-platform Node script so it runs on macOS, Linux, and
+                Windows.
+              </div>
+            </div>
+          </div>
+
+          <div class="callout">
+            <svg
+              class="callout-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path
+                d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z"
+              />
+              <line x1="9" y1="21" x2="15" y2="21" />
+            </svg>
+            <span
+              >Why Node + exec form? Setting <code>"command": "node"</code>
+              with an <code>args</code> array spawns the script
+              <strong>without a shell</strong>, and Claude Code substitutes
+              <code>${CLAUDE_PROJECT_DIR}</code> itself &mdash; so the same
+              hook runs identically on macOS, Linux, and Windows, with no
+              <code>jq</code>, Git Bash, or WSL. A shell one-liner would need
+              a POSIX shell on Windows.</span
+            >
+          </div>
+
+          <div class="callout">
+            <svg
+              class="callout-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path
+                d="M12 9v4M12 17h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"
+              />
+            </svg>
+            <span
+              >Hooks run code as you &mdash; only add hooks you trust. The
+              Read guard covers the <strong>Read tool</strong>; Claude could
+              still <code>cat .env</code> via Bash, so for airtight secrets
+              also use Claude Code's built-in <code>permissions.deny</code>
+              (e.g. <code>"Read(./.env)"</code>). Run <code>/hooks</code> to
+              see what's active.</span
+            >
+          </div>
+
+          <details class="hint">
+            <summary>Reference: the .claude/settings.json (exec form)</summary>
+            <div class="hint-content">
+              <div class="prompt-box">
+                <span class="prompt-label">.claude/settings.json</span>
+                <button class="copy-btn" onclick="copyText(this)">Copy</button>
+                <div class="prompt-content">
+                  {
+                    "hooks": {
+                      "PreToolUse": [
+                        {
+                          "matcher": "Read",
+                          "hooks": [
+                            {
+                              "type": "command",
+                              "command": "node",
+                              "args": ["${CLAUDE_PROJECT_DIR}/.claude/hooks/deny-read-env.mjs"]
+                            }
+                          ]
+                        },
+                        {
+                          "matcher": "Edit|Write",
+                          "hooks": [
+                            {
+                              "type": "command",
+                              "command": "node",
+                              "args": ["${CLAUDE_PROJECT_DIR}/.claude/hooks/deny-write-protected.mjs"]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                </div>
+              </div>
+            </div>
+          </details>
+
+          <ul class="checklist">
+            <li onclick="toggleCheck(this)">
+              Reading <code>.env</code> is blocked with a clear reason
+            </li>
+            <li onclick="toggleCheck(this)">
+              Editing <code>pnpm-lock.yaml</code> /
+              <code>routeTree.gen.ts</code> is blocked
+            </li>
+            <li onclick="toggleCheck(this)">
+              Hooks run unchanged on your OS (exec form, no jq)
+            </li>
+          </ul>
+
+          <button class="complete-btn" onclick="toggleComplete(this)">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M5 12l5 5L20 7" />
+            </svg>
+            Mark as Completed
+          </button>
+        </div>
+      </article>
+
+      <!-- ============================================================
+         PART 2
+         ============================================================ -->
+      <div class="part-header">
+        <h2>Part 2: Building the Orchestration Layer</h2>
+        <p>
+          Build the requirements skills and a QA review agent to learn the
+          mechanics of skills and subagents &mdash; and, just as important,
+          learn when delegating to a subagent actually helps versus when it
+          gets in the way. (~20 min)
+        </p>
+      </div>
+
+      <!-- Step 6 -->
+      <article class="step-card" data-feature="6">
+        <div class="step-header" onclick="toggleCard(this.parentElement)">
+          <div class="step-header-left">
+            <span class="step-number">6</span>
+            <div class="step-title-group">
+              <div class="step-title">Interview Requirements Skill</div>
+              <div class="step-desc">
+                A /interview-requirements skill that fleshes out feature
+                details before filing an issue
+              </div>
+            </div>
+          </div>
+          <div class="step-header-right">
+            <span class="step-time">~10 min</span>
+            <svg
+              class="chevron"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </div>
+        </div>
+        <div class="step-body">
+          <p>
+            Writing good requirements is a dialogue, not a monologue. This
+            skill does the product work directly in your main thread &mdash;
+            where it can actually ask you questions &mdash; so there's no
+            separate "product manager" agent to maintain.
+          </p>
+
+          <div class="prompt-box">
+            <span class="prompt-label">Prompt</span>
+            <button class="copy-btn" onclick="copyText(this)">Copy</button>
+            <div class="prompt-content">
+              I want to create a skill called interview-requirements that acts
+              as a product manager to flesh out a feature before filing an
+              issue. When I run /interview-requirements &lt;feature&gt;, it
+              should focus only on requirements and never implementation. It
+              should ask me 3-5 targeted questions using the AskUserQuestion
+              tool to clarify scope, target users, edge cases, acceptance
+              criteria, and priority. Then it should synthesize my answers
+              into a structured feature spec — a user story ("As a [user], I
+              want [goal] so that [benefit]"), acceptance criteria, edge
+              cases, and out-of-scope items — present it clearly, and ask me
+              whether I want to invoke /create-issue to save the spec to
+              docs/issues/.
+            </div>
+          </div>
+
+          <div class="callout">
+            <svg
+              class="callout-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path
+                d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z"
+              />
+              <line x1="9" y1="21" x2="15" y2="21" />
+            </svg>
+            <span
+              >This is the product work, captured as a main-thread skill
+              rather than a delegated agent &mdash; which matters because a
+              subagent can't use <code>AskUserQuestion</code>, the tool that
+              lets Claude present structured choices and gather precise
+              answers interactively.</span
+            >
+          </div>
+
+          <ul class="checklist">
+            <li onclick="toggleCheck(this)">
+              Created
+              <code>.claude/skills/interview-requirements/SKILL.md</code>
+            </li>
+            <li onclick="toggleCheck(this)">
+              Ran <code>/interview-requirements</code> on a sample feature and
+              confirmed the spec output
+            </li>
+            <li onclick="toggleCheck(this)">
+              Persisted the issue via <code>/create-issue</code>
+            </li>
+          </ul>
+
+          <button class="complete-btn" onclick="toggleComplete(this)">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M5 12l5 5L20 7" />
+            </svg>
+            Mark as Completed
+          </button>
+        </div>
+      </article>
+
+      <!-- Step 7 -->
+      <article class="step-card" data-feature="7">
+        <div class="step-header" onclick="toggleCard(this.parentElement)">
+          <div class="step-header-left">
+            <span class="step-number">7</span>
+            <div class="step-title-group">
+              <div class="step-title">Create Issue Skill</div>
+              <div class="step-desc">
+                A /create-issue slash command that saves issues to
+                docs/issues/
+              </div>
+            </div>
+          </div>
+          <div class="step-header-right">
+            <span class="step-time">~5 min</span>
+            <svg
+              class="chevron"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </div>
+        </div>
+        <div class="step-body">
+          <p>
+            <strong>Skills</strong> live in
+            <code>.claude/skills/&lt;name&gt;/SKILL.md</code> and automate
+            repeatable workflows. A skill can be invoked manually as
+            <code>/name</code> or chosen automatically by Claude. The
+            <code>/create-issue</code> skill gives you (and any agent) a
+            standard way to persist requirements as markdown files you can
+            pick up and implement later.
+          </p>
+
+          <div class="prompt-box">
+            <span class="prompt-label">Prompt</span>
+            <button class="copy-btn" onclick="copyText(this)">Copy</button>
+            <div class="prompt-content">
+              I want to create a skill called create-issue that turns a
+              feature, bug, or task into a tracked work item. When I run
+              /create-issue, it should read a title and short description from
+              the arguments, generate a URL-friendly slug from the title
+              (lowercase, hyphens, no special chars), and create a markdown
+              file at docs/issues/&lt;slug&gt;.md with these fields: title,
+              description, acceptance criteria, priority (low/medium/high),
+              and status: open. It should create the docs/issues/ directory
+              if it doesn't exist and print the path of the created file.
+              After creating the file, offer next steps: suggest implementing
+              the issue we just created (referencing the file path) or
+              creating another issue. Only let me invoke it manually, not the
+              model, and give it just the tools it needs to write the file.
+            </div>
+          </div>
+
+          <div class="callout">
+            <svg
+              class="callout-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path
+                d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z"
+              />
+              <line x1="9" y1="21" x2="15" y2="21" />
+            </svg>
+            <span
+              >A skill runs in the current conversation context. Anything
+              &mdash; you, the interview skill, or the QA agent &mdash; can
+              invoke <code>/create-issue</code> directly, making it a shared
+              contract for the requirements workflow.</span
+            >
+          </div>
+
+          <div class="step-section">
+            <div class="step-section-title">Test the hand-off</div>
+            <p>
+              Once the skill is created, run it with a test feature and watch
+              the hand-off in action:
+            </p>
+            <div class="prompt-box">
+              <span class="prompt-label">Claude Code</span>
+              <button class="copy-btn" onclick="copyText(this)">Copy</button>
+              <div class="prompt-content">/create-issue "Dark Mode Toggle" "Add a dark/light mode switch that persists the user's preference in localStorage."</div>
+            </div>
+            <p>
+              After creating the file, Claude should offer next steps
+              naturally &mdash; something like:
+            </p>
+            <div class="prompt-box">
+              <span class="prompt-label">Expected output (example)</span>
+              <button class="copy-btn" onclick="copyText(this)">Copy</button>
+              <div class="prompt-content">
+                Created docs/issues/dark-mode-toggle.md
+
+                Next steps:
+                - Implement the issue we just created → docs/issues/dark-mode-toggle.md
+                - Create another issue
+              </div>
+            </div>
+            <div class="callout">
+              <svg
+                class="callout-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z"
+                />
+                <line x1="9" y1="21" x2="15" y2="21" />
+              </svg>
+              <span
+                >The hand-off keeps momentum: instead of dropping the user
+                back at a blank prompt, the skill points them at the obvious
+                next action &mdash; implement what was just specced, or keep
+                filing issues.</span
+              >
+            </div>
+          </div>
+
+          <div class="step-section">
+            <div class="step-section-title">Document the convention</div>
+            <p>
+              The skill knows where issues live, but the main thread doesn't
+              yet &mdash; so prompts like &ldquo;implement the next open
+              issue&rdquo; or a QA agent filing bugs have nothing to anchor
+              on. Record the convention in <code>CLAUDE.md</code> (always-on
+              context) so every session and every agent shares it.
+            </p>
+            <div class="prompt-box">
+              <span class="prompt-label">Prompt</span>
+              <button class="copy-btn" onclick="copyText(this)">Copy</button>
+              <div class="prompt-content">
+                Add a short "## Issue tracking" section to CLAUDE.md
+                documenting our convention: tracked work items live in
+                docs/issues/&lt;slug&gt;.md as markdown with a status field
+                that goes from open to done. They're filed with /create-issue
+                and resolved with /close-issue. Keep it to a couple of lines.
+              </div>
+            </div>
+          </div>
+
+          <ul class="checklist">
+            <li onclick="toggleCheck(this)">
+              Created
+              <code>.claude/skills/create-issue/SKILL.md</code>
+            </li>
+            <li onclick="toggleCheck(this)">
+              Tested <code>/create-issue</code> manually and saw the file
+              appear in <code>docs/issues/</code>
+            </li>
+            <li onclick="toggleCheck(this)">
+              Skill offered next steps with a link to the created file
+            </li>
+            <li onclick="toggleCheck(this)">
+              Documented the <code>docs/issues/</code> convention in
+              <code>CLAUDE.md</code>
+            </li>
+          </ul>
+
+          <button class="complete-btn" onclick="toggleComplete(this)">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M5 12l5 5L20 7" />
+            </svg>
+            Mark as Completed
+          </button>
+        </div>
+      </article>
+
+      <!-- Step 8 -->
+      <article class="step-card" data-feature="8">
+        <div class="step-header" onclick="toggleCard(this.parentElement)">
+          <div class="step-header-left">
+            <span class="step-number">8</span>
+            <div class="step-title-group">
+              <div class="step-title">Close Issue Skill</div>
+              <div class="step-desc">
+                A /close-issue skill that marks an existing issue done &mdash;
+                closing the loop opened by /create-issue
+              </div>
+            </div>
+          </div>
+          <div class="step-header-right">
+            <span class="step-time">~5 min</span>
+            <svg
+              class="chevron"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </div>
+        </div>
+        <div class="step-body">
+          <p>
+            Where <code>/create-issue</code> writes a brand-new file, this
+            skill <em>reads and mutates</em> an existing one &mdash; the other
+            half of file-manipulation skills. It completes the requirements
+            lifecycle: interview &rarr; open &rarr; build &rarr; QA &rarr;
+            close.
+          </p>
+
+          <div class="prompt-box">
+            <span class="prompt-label">Prompt</span>
+            <button class="copy-btn" onclick="copyText(this)">Copy</button>
+            <div class="prompt-content">
+              I want to create a skill called close-issue that marks a
+              tracked work item as done. When I run /close-issue with an
+              issue slug (or part of a title) in the arguments, it should
+              find the matching file in docs/issues/, flip its status field
+              from open to done, and append a short resolution note plus the
+              current commit reference if I provide one. If no slug matches,
+              or several do, it should list the candidates and ask me which
+              one rather than guessing. After updating, it should print the
+              file path and a summary of which issues are still open. Only
+              let me invoke it manually, not the model, and give it just the
+              tools it needs to read and edit the files.
+            </div>
+          </div>
+
+          <div class="callout">
+            <svg
+              class="callout-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path
+                d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z"
+              />
+              <line x1="9" y1="21" x2="15" y2="21" />
+            </svg>
+            <span
+              >Like <code>/create-issue</code>, this is a shared contract
+              &mdash; you can close an issue by hand once a feature passes
+              review, or have the QA agent reference it. Notice it teaches
+              <code>Read</code> + <code>Edit</code> (finding and changing
+              state), the counterpart to <code>/create-issue</code>'s
+              <code>Write</code>.</span
+            >
+          </div>
+
+          <ul class="checklist">
+            <li onclick="toggleCheck(this)">
+              Created
+              <code>.claude/skills/close-issue/SKILL.md</code>
+            </li>
+            <li onclick="toggleCheck(this)">
+              Ran <code>/close-issue</code> on an open issue and saw its
+              status flip to <code>done</code>
+            </li>
+          </ul>
+
+          <button class="complete-btn" onclick="toggleComplete(this)">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M5 12l5 5L20 7" />
+            </svg>
+            Mark as Completed
+          </button>
+        </div>
+      </article>
+
+      <!-- Step 9 -->
+      <article class="step-card" data-feature="9">
+        <div class="step-header" onclick="toggleCard(this.parentElement)">
+          <div class="step-header-left">
+            <span class="step-number">9</span>
+            <div class="step-title-group">
+              <div class="step-title">QA Agent</div>
+              <div class="step-desc">
+                A testing agent that verifies features and reports bugs
+              </div>
+            </div>
+          </div>
+          <div class="step-header-right">
+            <span class="step-time">~5 min</span>
+            <svg
+              class="chevron"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </div>
+        </div>
+        <div class="step-body">
+          <p>
+            <strong>Agents</strong> (subagents) are specialized helpers that
+            Claude delegates work to. Each is a markdown file in
+            <code>.claude/agents/</code> whose frontmatter defines its role,
+            tools, and a <code>description</code>
+            Claude uses to auto-delegate (or you ask for it by name).
+            Crucially, a subagent runs in its own
+            <strong>separate context window</strong> &mdash; it doesn't see
+            the main conversation; it does its job and returns a result.
+          </p>
+          <p>
+            QA is the role where that isolation actually pays off. Because it
+            runs in a <strong>separate, fresh context</strong>, it reviews
+            the feature with fresh eyes &mdash; exactly what the main thread
+            that just built it is bad at. It tests implemented features
+            using Chrome DevTools MCP, checks both happy path and error
+            states, and files bug reports as new issues to fix. A review/QA
+            subagent like this is the standout real-world subagent pattern.
+          </p>
+
+          <div class="prompt-box">
+            <span class="prompt-label">Prompt</span>
+            <button class="copy-btn" onclick="copyText(this)">Copy</button>
+            <div class="prompt-content">
+              Create a QA agent at .claude/agents/qa.md. Give it a
+              frontmatter description that triggers auto-delegation (e.g.
+              "QA tester. Use proactively after a feature is implemented to
+              verify it and file bug reports."). Restrict its tools so it can
+              test but never modify source — no Edit/Write: tools: Read,
+              Grep, Glob, and add the Chrome DevTools MCP server (via the
+              mcpServers frontmatter field) so it can drive the browser. It
+              should:
+              - Test features by navigating the app with Chrome DevTools MCP (take screenshots, click buttons, fill forms)
+              - Check both happy path and error states
+              - Verify responsive behavior at mobile and desktop widths
+              - Report bugs by creating a new issue via /create-issue with: steps to reproduce, expected vs actual behavior, and a screenshot path
+              - Never fix bugs — only report them clearly for the developer to fix
+            </div>
+          </div>
+
+          <div class="callout">
+            <svg
+              class="callout-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path
+                d="M12 9v4M12 17h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"
+              />
+            </svg>
+            <span
+              >Know the limits: a subagent gets a
+              <strong>fresh context window</strong> (it can't see your
+              current conversation), it
+              <strong>cannot call other subagents</strong> &mdash; chain them
+              from the main thread instead &mdash; and it
+              <strong>cannot use</strong> <code>AskUserQuestion</code>, which
+              is exactly why the interactive
+              <code>/interview-requirements</code> step stays in the main
+              conversation, not inside an agent.</span
+            >
+          </div>
+
+          <p>
+            <strong>Try the full workflow (a learning exercise):</strong>
+          </p>
+
+          <div class="prompt-box">
+            <span class="prompt-label">Prompt</span>
+            <button class="copy-btn" onclick="copyText(this)">Copy</button>
+            <div class="prompt-content">
+              Run /interview-requirements 'the ability to pin a tweet to your
+              profile' to spec the feature, then save it with /create-issue.
+              Implement the issue yourself in the main thread. Finally, use
+              the QA agent to test it and report any issues.
+            </div>
+          </div>
+
+          <div class="callout">
+            <svg
+              class="callout-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path
+                d="M12 9v4M12 17h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"
+              />
+            </svg>
+            <span
+              >Reality check: this product&rarr;dev&rarr;QA chain is a
+              <strong>sequential pipeline</strong> &mdash; each step depends
+              on the last, so information leaks in the handoffs. It's a great
+              way to exercise the agent/skill mechanics, but in real work
+              you'd keep dependent, iterative work (like implementation) in
+              the main thread and reserve subagents for the standalone wins:
+              research, fresh-eyes review, and custom-prompt tasks.</span
+            >
+          </div>
+
+          <details class="hint">
+            <summary>Agent vs Skill — when to use which?</summary>
+            <div class="hint-content">
+              <strong>Agents</strong> delegate a self-contained task to a
+              separate context window with its own role and tools &mdash;
+              use them when you want focused work done in isolation (e.g., a
+              QA tester vs a developer) and just the result back.
+              <strong>Skills</strong> are one-shot automations that run in
+              the current conversation &mdash; use them for repeatable tasks
+              like gathering requirements, creating issues, or committing.
+            </div>
+          </details>
+
+          <ul class="checklist">
+            <li onclick="toggleCheck(this)">
+              Created <code>.claude/agents/qa.md</code>
+            </li>
+            <li onclick="toggleCheck(this)">
+              Ran the full interview &rarr; create-issue &rarr; implement
+              &rarr; QA workflow
+            </li>
+          </ul>
+
+          <button class="complete-btn" onclick="toggleComplete(this)">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M5 12l5 5L20 7" />
+            </svg>
+            Mark as Completed
+          </button>
+        </div>
+      </article>
+
+      <!-- Step 10 -->
+      <article class="step-card" data-feature="10">
+        <div class="step-header" onclick="toggleCard(this.parentElement)">
+          <div class="step-header-left">
+            <span class="step-number">10</span>
+            <div class="step-title-group">
+              <div class="step-title">Codebase Explorer Agent</div>
+              <div class="step-desc">
+                A read-only research agent that answers "how does X work?"
+                without flooding your context
+              </div>
+            </div>
+          </div>
+          <div class="step-header-right">
+            <span class="step-time">~5 min</span>
+            <svg
+              class="chevron"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </div>
+        </div>
+        <div class="step-body">
+          <p>
+            The QA agent showed one reason to reach for a subagent:
+            <strong>restricting its powers</strong>. This one shows the other
+            &mdash; <strong>context isolation</strong>. Answering "how does a
+            like flow from the UI to the API?" means opening a handful of
+            files, but you only care about the answer. Delegate it and the
+            agent spends <em>its</em> fresh context budget on all that
+            reading, then hands back a tight summary &mdash; your main
+            thread stays clean for the work that actually needs it.
+          </p>
+          <p>
+            Where QA runs <strong>after</strong> a feature to verify it,
+            you'll reach for the explorer <strong>during</strong>
+            the build &mdash; before changing code you don't yet understand.
+          </p>
+
+          <div class="prompt-box">
+            <span class="prompt-label">Prompt</span>
+            <button class="copy-btn" onclick="copyText(this)">Copy</button>
+            <div class="prompt-content">
+              Create a codebase explorer agent at .claude/agents/codebase-explorer.md. Give it a frontmatter description that triggers auto-delegation for research questions (e.g. "Read-only codebase researcher. Use when answering a question requires reading across many files — tracing a data flow, locating where something is implemented, or summarizing how a subsystem works — so the main thread stays uncluttered."). Restrict its tools to read-only exploration: tools: Read, Grep, Glob — no Edit, Write, or Bash. It should:
+              - Search broadly to answer the question, reading only the relevant excerpts rather than whole files
+              - Trace data flow across layers (components → queries → API) and identify the key files
+              - Return a tight, structured summary of its findings with exact file:line references — never a dump of everything it read
+              - Never modify code or run the app — only investigate and report back
+            </div>
+          </div>
+
+          <div class="callout">
+            <svg
+              class="callout-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path
+                d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z"
+              />
+              <line x1="9" y1="21" x2="15" y2="21" />
+            </svg>
+            <span
+              >Two agents, two different payoffs: <code>qa</code> trades on
+              <strong>restricted tools + fresh eyes</strong>, the explorer on
+              <strong>a separate context budget</strong>. Both are read-only
+              reporters &mdash; the pattern that suits subagents best
+              &mdash; and neither can ask you questions, which is why
+              interactive work stays in the main thread.</span
+            >
+          </div>
+
+          <p>
+            <strong>Try it (a learning exercise):</strong>
+          </p>
+
+          <div class="prompt-box">
+            <span class="prompt-label">Prompt</span>
+            <button class="copy-btn" onclick="copyText(this)">Copy</button>
+            <div class="prompt-content">
+              Use the codebase-explorer agent to trace how a "like" flows
+              from the feed UI through the queries layer to the API, and
+              report back the key files with line numbers.
+            </div>
+          </div>
+
+          <ul class="checklist">
+            <li onclick="toggleCheck(this)">
+              Created
+              <code>.claude/agents/codebase-explorer.md</code>
+            </li>
+            <li onclick="toggleCheck(this)">
+              Delegated a "trace this data flow" question and got back a
+              summary with <code>file:line</code> references
+            </li>
+          </ul>
+
+          <button class="complete-btn" onclick="toggleComplete(this)">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M5 12l5 5L20 7" />
+            </svg>
+            Mark as Completed
+          </button>
+        </div>
+      </article>
+
+      <!-- Step 11 -->
+      <article class="step-card" data-feature="11">
+        <div class="step-header" onclick="toggleCard(this.parentElement)">
+          <div class="step-header-left">
+            <span class="step-number">11</span>
+            <div class="step-title-group">
+              <div class="step-title">
+                Hooks &mdash; Inject Context at Session Start
+              </div>
+              <div class="step-desc">
+                Feed live project context to Claude at the start of every
+                session
+              </div>
+            </div>
+          </div>
+          <div class="step-header-right">
+            <span class="step-time">~5 min</span>
+            <svg
+              class="chevron"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </div>
+        </div>
+        <div class="step-body">
+          <p>
+            Skills you invoke; subagents Claude delegates to.
+            <strong>Hooks</strong> are the third extension point &mdash;
+            commands Claude Code runs <strong>automatically</strong> on
+            lifecycle events, with no model involved. They live in
+            <code>.claude/settings.json</code>, receive a JSON payload on
+            stdin, and can <strong>inject context</strong> or
+            <strong>block a tool call</strong>. You already used the
+            blocking side as guardrails in <strong>Step 5</strong>; here we
+            use the other side &mdash; a <code>SessionStart</code> hook that
+            feeds Claude live project context the moment a session begins.
+            As before, we write it as a small <strong>Node script</strong>
+            so it runs on every machine &mdash; macOS, Linux, and Windows
+            &mdash; with no <code>jq</code> and no shell quirks.
+          </p>
+
+          <div class="step-section">
+            <div class="step-section-title">
+              SessionStart &mdash; inject live context
+            </div>
+            <div class="prompt-box">
+              <span class="prompt-label">Prompt</span>
+              <button class="copy-btn" onclick="copyText(this)">Copy</button>
+              <div class="prompt-content">
+                First use the claude-code-guide agent to check the
+                documentation on how to create hooks. Then add a
+                SessionStart hook that injects useful context at the start
+                of each session: the current git branch, the number of
+                uncommitted files, and the last 3 commits. Write it as a
+                cross-platform Node script so it works on macOS, Linux, and
+                Windows.
+              </div>
+            </div>
+          </div>
+
+          <div class="callout">
+            <svg
+              class="callout-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path
+                d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z"
+              />
+              <line x1="9" y1="21" x2="15" y2="21" />
+            </svg>
+            <span
+              >Why Node + exec form? Setting <code>"command": "node"</code>
+              with an <code>args</code> array spawns the script
+              <strong>without a shell</strong>, and Claude Code substitutes
+              <code>${CLAUDE_PROJECT_DIR}</code> itself &mdash; so the same
+              hook runs identically on macOS, Linux, and Windows, with no
+              <code>jq</code>, Git Bash, or WSL. A shell one-liner would need
+              a POSIX shell on Windows.</span
+            >
+          </div>
+
+          <div class="callout">
+            <svg
+              class="callout-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path
+                d="M12 9v4M12 17h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"
+              />
+            </svg>
+            <span
+              >Hooks run code as you &mdash; only add hooks you trust. This
+              SessionStart hook sits alongside the
+              <code>PreToolUse</code> guardrails you added in
+              <strong>Step 5</strong>. Run <code>/hooks</code> to see
+              everything that's active.</span
+            >
+          </div>
+
+          <details class="hint">
+            <summary>Reference: the .claude/settings.json (exec form)</summary>
+            <div class="hint-content">
+              <div class="prompt-box">
+                <span class="prompt-label">.claude/settings.json</span>
+                <button class="copy-btn" onclick="copyText(this)">Copy</button>
+                <div class="prompt-content">
+                  {
+                    "hooks": {
+                      "SessionStart": [
+                        {
+                          "hooks": [
+                            {
+                              "type": "command",
+                              "command": "node",
+                              "args": ["${CLAUDE_PROJECT_DIR}/.claude/hooks/session-start.mjs"]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                </div>
+              </div>
+            </div>
+          </details>
+
+          <ul class="checklist">
+            <li onclick="toggleCheck(this)">
+              SessionStart injects branch + recent commits
+            </li>
+            <li onclick="toggleCheck(this)">
+              The context appears at the top of a new session
+            </li>
+            <li onclick="toggleCheck(this)">
+              Hook runs unchanged on your OS (exec form, no jq)
+            </li>
+          </ul>
+
+          <button class="complete-btn" onclick="toggleComplete(this)">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M5 12l5 5L20 7" />
+            </svg>
+            Mark as Completed
+          </button>
+        </div>
+      </article>
+
+      <!-- ============================================================
+         PART 3
+         ============================================================ -->
+      <div class="part-header">
+        <h2>Part 3: Building Features</h2>
+        <p>
+          The backend API is already deployed and fully functional. The
+          frontend's layout, routing, and auth already work &mdash; nothing
+          else is built yet. Use everything from Parts 1 &amp; 2 to build
+          five features from scratch, one at a time. (~75-90 min for the
+          first four; the fifth is an optional stretch.)
+        </p>
+      </div>
+
+      <div class="info-card">
+        <strong>No Swagger yet:</strong> there's no interactive API
+        reference published for this workshop. Ask Claude to make a test
+        request against the relevant endpoint and inspect the actual
+        response shape before writing code against it &mdash; that's a
+        fine substitute.
+      </div>
+
+      <!-- Step 12 -->
+      <article class="step-card" data-feature="12">
+        <div class="step-header" onclick="toggleCard(this.parentElement)">
+          <div class="step-header-left">
+            <span class="step-number">12</span>
+            <div class="step-title-group">
+              <div class="step-title">Tweet Composer</div>
+              <div class="step-desc">
+                Build the post form from scratch, with optional images
+              </div>
+            </div>
+          </div>
+          <div class="step-header-right">
+            <span class="step-time">~20 min</span>
+            <svg
+              class="chevron"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </div>
+        </div>
+        <div class="step-body">
+          <ol>
+            <li>
+              <strong>Context</strong>
+              <p>
+                There's no composer yet &mdash; the landing page at
+                <code>src/frontend/src/routes/_app/index.tsx</code> is just a welcome
+                message. You're building the dialog, textarea, character
+                counter, optional image picker, and the submit logic from
+                scratch. <code>POST /api/tweets</code> (content + up to 4
+                image keys) and the upload endpoint are both live &mdash;
+                ask Claude to make a test request first and inspect the
+                real response shape before wiring the form to it.
+              </p>
+            </li>
+            <li>
+              <strong>File the issue with <code>/create-issue</code></strong>
+              <div class="prompt-box">
+                <span class="prompt-label">Claude Code</span>
+                <button class="copy-btn" onclick="copyText(this)">Copy</button>
+                <div class="prompt-content">
+                  /create-issue "Tweet Composer" "Build a compose dialog reachable from the landing page: a textarea with a character counter (280 max), an optional image picker (up to 4 images), and a Post button disabled when there's no content and no image. On submit, upload any selected images, then POST /api/tweets with the content and resulting image keys. On success, close the dialog and show a confirmation with the tweet that was just created."
+                </div>
+              </div>
+            </li>
+            <li>
+              <strong>Implement from the issue</strong>
+              <div class="prompt-box">
+                <span class="prompt-label">Prompt</span>
+                <button class="copy-btn" onclick="copyText(this)">Copy</button>
+                <div class="prompt-content">
+                  Open the issue file in docs/issues/ for the tweet composer
+                  and implement everything it describes, from scratch.
+                  Follow the existing conventions in
+                  src/frontend/src/lib/session.ts for the query pattern, and
+                  reuse src/frontend/src/components/ui/ primitives (dialog,
+                  textarea, button) instead of writing new ones.
+                </div>
+              </div>
+            </li>
+            <li>
+              <strong>Close the issue</strong>
+              <div class="prompt-box">
+                <span class="prompt-label">Claude Code</span>
+                <button class="copy-btn" onclick="copyText(this)">Copy</button>
+                <div class="prompt-content">/close-issue tweet-composer</div>
+              </div>
+            </li>
+            <li>
+              <strong>Test it</strong>
+              <div class="prompt-box">
+                <span class="prompt-label">Prompt</span>
+                <button class="copy-btn" onclick="copyText(this)">Copy</button>
+                <div class="prompt-content">
+                  Open http://localhost:5173, open the composer, post a
+                  tweet with text and one image, and take a screenshot
+                  confirming the success state and that POST /api/tweets
+                  returned 201.
+                </div>
+              </div>
+            </li>
+          </ol>
+
+          <details class="hint">
+            <summary>Stuck? Where to put things</summary>
+            <div class="hint-content">
+              <ul>
+                <li>
+                  <code>src/frontend/src/hooks/</code> &mdash; a good place
+                  for the char-limit / image-limit gating logic, kept
+                  separate from the dialog's rendering
+                </li>
+                <li>
+                  <code>src/frontend/src/queries/tweets.ts</code> (new file)
+                  &mdash; where <code>createTweet</code>/<code>uploadImages</code>
+                  belong, following the <code>queryOptions</code> pattern in
+                  <code>src/frontend/src/lib/session.ts</code>
+                </li>
+              </ul>
+            </div>
+          </details>
+
+          <ul class="checklist">
+            <li onclick="toggleCheck(this)">
+              Posting text-only works and shows a success confirmation
+            </li>
+            <li onclick="toggleCheck(this)">
+              Posting with an image works and the image renders
+            </li>
+            <li onclick="toggleCheck(this)">
+              Empty content with no image keeps Post disabled
+            </li>
+          </ul>
+
+          <button class="complete-btn" onclick="toggleComplete(this)">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M5 12l5 5L20 7" />
+            </svg>
+            Mark as Completed
+          </button>
+        </div>
+      </article>
+
+      <!-- Step 13 -->
+      <article class="step-card" data-feature="13">
+        <div class="step-header" onclick="toggleCard(this.parentElement)">
+          <div class="step-header-left">
+            <span class="step-number">13</span>
+            <div class="step-title-group">
+              <div class="step-title">Home Timeline Feed</div>
+              <div class="step-desc">
+                Render a feed of tweets, with infinite scroll
+              </div>
+            </div>
+          </div>
+          <div class="step-header-right">
+            <span class="step-time">~20 min</span>
+            <svg
+              class="chevron"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </div>
+        </div>
+        <div class="step-body">
+          <ol>
+            <li>
+              <strong>Context</strong>
+              <p>
+                There's no way to see any tweet yet, including the ones you
+                just posted in Step 12. You're building a
+                <code>TweetCard</code> component (content, author, image)
+                and a feed that fetches it. <code>GET /api/timeline</code>
+                already supports cursor-based pagination.
+              </p>
+            </li>
+            <li>
+              <strong>File the issue with <code>/create-issue</code></strong>
+              <div class="prompt-box">
+                <span class="prompt-label">Claude Code</span>
+                <button class="copy-btn" onclick="copyText(this)">Copy</button>
+                <div class="prompt-content">
+                  /create-issue "Home Timeline Feed" "Build a TweetCard component that renders a tweet's author, content, and images, and a home feed that fetches GET /api/timeline using TanStack Query's infinite query with cursor-based pagination, rendering each item with TweetCard and a sentinel element that triggers the next page on scroll."
+                </div>
+              </div>
+            </li>
+            <li>
+              <strong>Implement from the issue</strong>
+              <div class="prompt-box">
+                <span class="prompt-label">Prompt</span>
+                <button class="copy-btn" onclick="copyText(this)">Copy</button>
+                <div class="prompt-content">
+                  Open the issue file in docs/issues/ for the home timeline
+                  feed and implement everything it describes, from scratch.
+                  Follow the existing conventions in
+                  src/frontend/src/lib/session.ts for the query pattern, and
+                  reuse src/frontend/src/components/ui/ primitives instead
+                  of writing new ones.
+                </div>
+              </div>
+            </li>
+            <li>
+              <strong>Close the issue</strong>
+              <div class="prompt-box">
+                <span class="prompt-label">Claude Code</span>
+                <button class="copy-btn" onclick="copyText(this)">Copy</button>
+                <div class="prompt-content">/close-issue home-timeline-feed</div>
+              </div>
+            </li>
+            <li>
+              <strong>Test it</strong>
+              <div class="prompt-box">
+                <span class="prompt-label">Prompt</span>
+                <button class="copy-btn" onclick="copyText(this)">Copy</button>
+                <div class="prompt-content">
+                  Open http://localhost:5173, confirm the tweets you posted
+                  in Step 12 render in the feed, then scroll to the bottom
+                  and take a screenshot confirming the next page loaded.
+                </div>
+              </div>
+            </li>
+          </ol>
+
+          <details class="hint">
+            <summary>Stuck? Where to put things</summary>
+            <div class="hint-content">
+              <ul>
+                <li>
+                  <code>src/frontend/src/components/</code> &mdash; where
+                  <code>TweetCard</code> belongs
+                </li>
+                <li>
+                  <code>src/frontend/src/queries/tweets.ts</code> &mdash;
+                  where the timeline query options belong (create it if
+                  Step 12 didn't already)
+                </li>
+              </ul>
+            </div>
+          </details>
+
+          <ul class="checklist">
+            <li onclick="toggleCheck(this)">Feed renders real tweets</li>
+            <li onclick="toggleCheck(this)">
+              Scrolling to the bottom loads the next page
+            </li>
+          </ul>
+
+          <button class="complete-btn" onclick="toggleComplete(this)">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M5 12l5 5L20 7" />
+            </svg>
+            Mark as Completed
+          </button>
+        </div>
+      </article>
+
+      <!-- Step 14 -->
+      <article class="step-card" data-feature="14">
+        <div class="step-header" onclick="toggleCard(this.parentElement)">
+          <div class="step-header-left">
+            <span class="step-number">14</span>
+            <div class="step-title-group">
+              <div class="step-title">Like &amp; Retweet</div>
+              <div class="step-desc">
+                Engagement buttons with optimistic count updates
+              </div>
+            </div>
+          </div>
+          <div class="step-header-right">
+            <span class="step-time">~20 min</span>
+            <svg
+              class="chevron"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </div>
+        </div>
+        <div class="step-body">
+          <ol>
+            <li>
+              <strong>Context</strong>
+              <p>
+                <code>TweetCard</code> (built in Step 13) has no engagement
+                buttons yet. You're adding like and retweet buttons with
+                icons and active/hover states, wired to the like/retweet
+                endpoints. Both are idempotent server-side, so
+                double-clicking is already safe.
+              </p>
+            </li>
+            <li>
+              <strong>File the issue with <code>/create-issue</code></strong>
+              <div class="prompt-box">
+                <span class="prompt-label">Claude Code</span>
+                <button class="copy-btn" onclick="copyText(this)">Copy</button>
+                <div class="prompt-content">
+                  /create-issue "Like & Retweet" "Add like and retweet buttons with icons and active/hover states to TweetCard. Wire them to POST/DELETE their respective endpoints and update the local count optimistically on click, rolling back on error."
+                </div>
+              </div>
+            </li>
+            <li>
+              <strong>Implement from the issue</strong>
+              <div class="prompt-box">
+                <span class="prompt-label">Prompt</span>
+                <button class="copy-btn" onclick="copyText(this)">Copy</button>
+                <div class="prompt-content">
+                  Open the issue file in docs/issues/ for like &amp; retweet
+                  and implement everything it describes, from scratch.
+                </div>
+              </div>
+            </li>
+            <li>
+              <strong>Close the issue</strong>
+              <div class="prompt-box">
+                <span class="prompt-label">Claude Code</span>
+                <button class="copy-btn" onclick="copyText(this)">Copy</button>
+                <div class="prompt-content">/close-issue like-retweet</div>
+              </div>
+            </li>
+            <li>
+              <strong>Test it</strong>
+              <div class="prompt-box">
+                <span class="prompt-label">Prompt</span>
+                <button class="copy-btn" onclick="copyText(this)">Copy</button>
+                <div class="prompt-content">
+                  Open http://localhost:5173, like and retweet a tweet, take
+                  a screenshot showing both counts updated, then reload the
+                  page and confirm the counts persisted.
+                </div>
+              </div>
+            </li>
+          </ol>
+
+          <details class="hint">
+            <summary>Stuck? Where to put things</summary>
+            <div class="hint-content">
+              <ul>
+                <li>
+                  <code>src/frontend/src/queries/tweets.ts</code> &mdash;
+                  where like/unlike/retweet/unretweet requests belong
+                </li>
+              </ul>
+            </div>
+          </details>
+
+          <ul class="checklist">
+            <li onclick="toggleCheck(this)">
+              Liking/retweeting updates the count immediately
+            </li>
+            <li onclick="toggleCheck(this)">
+              Reloading the page keeps the updated count
+            </li>
+          </ul>
+
+          <button class="complete-btn" onclick="toggleComplete(this)">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M5 12l5 5L20 7" />
+            </svg>
+            Mark as Completed
+          </button>
+        </div>
+      </article>
+
+      <!-- Step 15 -->
+      <article class="step-card" data-feature="15">
+        <div class="step-header" onclick="toggleCard(this.parentElement)">
+          <div class="step-header-left">
+            <span class="step-number">15</span>
+            <div class="step-title-group">
+              <div class="step-title">Inline Reply</div>
+              <div class="step-desc">
+                Reply to a tweet and see it inline
+              </div>
+            </div>
+          </div>
+          <div class="step-header-right">
+            <span class="step-time">~20 min</span>
+            <svg
+              class="chevron"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </div>
+        </div>
+        <div class="step-body">
+          <ol>
+            <li>
+              <strong>Context</strong>
+              <p>
+                There's no reply UI yet. Add a Reply icon and an inline
+                reply box to <code>TweetCard</code> &mdash; it can reuse a
+                lot of what you built for the composer in Step 12. Posting
+                a reply reuses the same <code>POST /api/tweets</code>
+                endpoint, with an added <code>parentTweetId</code>.
+              </p>
+            </li>
+            <li>
+              <strong>File the issue with <code>/create-issue</code></strong>
+              <div class="prompt-box">
+                <span class="prompt-label">Claude Code</span>
+                <button class="copy-btn" onclick="copyText(this)">Copy</button>
+                <div class="prompt-content">
+                  /create-issue "Inline Reply" "Add a Reply icon to TweetCard that toggles an inline reply box below the tweet. Submit a reply via POST /api/tweets with parentTweetId set, append the poster's own reply to the local list immediately, and fetch existing replies via GET /api/tweets/:id/replies when the box is opened."
+                </div>
+              </div>
+            </li>
+            <li>
+              <strong>Implement from the issue</strong>
+              <div class="prompt-box">
+                <span class="prompt-label">Prompt</span>
+                <button class="copy-btn" onclick="copyText(this)">Copy</button>
+                <div class="prompt-content">
+                  Open the issue file in docs/issues/ for inline reply and
+                  implement everything it describes, from scratch. Reuse
+                  the textarea/submit pattern from the composer where it
+                  makes sense.
+                </div>
+              </div>
+            </li>
+            <li>
+              <strong>Close the issue</strong>
+              <div class="prompt-box">
+                <span class="prompt-label">Claude Code</span>
+                <button class="copy-btn" onclick="copyText(this)">Copy</button>
+                <div class="prompt-content">/close-issue inline-reply</div>
+              </div>
+            </li>
+            <li>
+              <strong>Test it</strong>
+              <div class="prompt-box">
+                <span class="prompt-label">Prompt</span>
+                <button class="copy-btn" onclick="copyText(this)">Copy</button>
+                <div class="prompt-content">
+                  Open http://localhost:5173, click Reply on a tweet, post a
+                  reply, and take a screenshot showing it appear inline
+                  immediately. Reload the page and confirm the reply still
+                  shows when you reopen the box.
+                </div>
+              </div>
+            </li>
+          </ol>
+
+          <details class="hint">
+            <summary>Stuck? Where to put things</summary>
+            <div class="hint-content">
+              <ul>
+                <li>
+                  <code>TweetCard</code> &mdash; where the "reply box open"
+                  state should live, since the box renders below the whole
+                  card
+                </li>
+                <li>
+                  <code>src/frontend/src/queries/tweets.ts</code> &mdash;
+                  where <code>fetchReplies</code> and the reply-aware
+                  <code>createTweet</code> call belong
+                </li>
+              </ul>
+            </div>
+          </details>
+
+          <ul class="checklist">
+            <li onclick="toggleCheck(this)">
+              Reply icon opens a compose box below the tweet
+            </li>
+            <li onclick="toggleCheck(this)">
+              Posting a reply shows it inline immediately
+            </li>
+            <li onclick="toggleCheck(this)">
+              Reopening the box after reload still shows existing replies
+            </li>
+          </ul>
+
+          <button class="complete-btn" onclick="toggleComplete(this)">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M5 12l5 5L20 7" />
+            </svg>
+            Mark as Completed
+          </button>
+        </div>
+      </article>
+
+      <!-- Step 16 -->
+      <article class="step-card" data-feature="16">
+        <div class="step-header" onclick="toggleCard(this.parentElement)">
+          <div class="step-header-left">
+            <span class="step-number">16</span>
+            <div class="step-title-group">
+              <div class="step-title">
+                Profile Page
+                <span class="badge badge-bonus" style="margin-left: 8px"
+                  >Stretch</span
+                >
+              </div>
+              <div class="step-desc">
+                Optional &mdash; only if the first four are done early
+              </div>
+            </div>
+          </div>
+          <div class="step-header-right">
+            <span class="step-time">~20 min</span>
+            <svg
+              class="chevron"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </div>
+        </div>
+        <div class="step-body">
+          <p>
+            This one's outside the core time budget above &mdash; only pick
+            it up if your group finishes Steps 12-15 early. It's structured
+            the same way as the rest.
+          </p>
+          <ol>
+            <li>
+              <strong>Context</strong>
+              <p>
+                There's no profile route yet. Build one showing a user's
+                banner, avatar, and bio via <code>GET /api/users/:handle</code>,
+                and their tweets via <code>GET /api/users/:handle/tweets</code>,
+                reusing <code>TweetCard</code> from Step 13. This is
+                view-only: no editing.
+              </p>
+            </li>
+            <li>
+              <strong>File the issue with <code>/create-issue</code></strong>
+              <div class="prompt-box">
+                <span class="prompt-label">Claude Code</span>
+                <button class="copy-btn" onclick="copyText(this)">Copy</button>
+                <div class="prompt-content">
+                  /create-issue "Profile Page" "Build a profile route showing a user's banner, avatar, and bio via GET /api/users/:handle, and their tweets via GET /api/users/:handle/tweets, rendering each with the existing TweetCard component."
+                </div>
+              </div>
+            </li>
+            <li>
+              <strong>Implement, close, and test</strong> &mdash; same
+              pattern as the steps above: implement from the issue file,
+              <code>/close-issue profile-page</code>, then screenshot a
+              user's profile with their tweets rendering.
+            </li>
+          </ol>
+
+          <ul class="checklist">
+            <li onclick="toggleCheck(this)">
+              Profile shows the right user's bio/avatar/banner
+            </li>
+            <li onclick="toggleCheck(this)">Their tweets render below it</li>
+          </ul>
+
+          <button class="complete-btn" onclick="toggleComplete(this)">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M5 12l5 5L20 7" />
+            </svg>
+            Mark as Completed
+          </button>
+        </div>
+      </article>
+
+      <!-- ============================================================
+         PART 4
+         ============================================================ -->
+      <div class="part-header">
+        <h2>Part 4: Free Roam</h2>
+        <p>
+          You've learned the core workflows and built real features. Now
+          it's your turn &mdash; pick any direction and make this app your
+          own.
+        </p>
+      </div>
+
+      <!-- Step 17 -->
+      <article class="step-card" data-feature="17">
+        <div class="step-header" onclick="toggleCard(this.parentElement)">
+          <div class="step-header-left">
+            <span class="step-number">17</span>
+            <div class="step-title-group">
+              <div class="step-title">Make It Yours</div>
+              <div class="step-desc">
+                Add any feature, redesign, or improvement you want
+              </div>
+            </div>
+          </div>
+          <div class="step-header-right">
+            <span class="step-time">open-ended</span>
+            <svg
+              class="chevron"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </div>
+        </div>
+        <div class="step-body">
+          <p>
+            This is your playground. Pick something that interests you and
+            build it with Claude. Here are some ideas to get you started:
+          </p>
+
+          <div class="step-section">
+            <div class="step-section-title">New features</div>
+            <ul
+              style="
+                list-style: disc;
+                padding-left: 24px;
+                margin: 8px 0;
+                font-size: 0.92rem;
+                color: var(--text-secondary);
+                line-height: 1.8;
+              "
+            >
+              <li>
+                Notifications &mdash; likes, follows, and replies with an
+                unread badge
+              </li>
+              <li>
+                Search &mdash; find tweets or users with a search bar
+              </li>
+              <li>
+                Bookmarks &mdash; save tweets and view them on a dedicated
+                page
+              </li>
+              <li>
+                Quote tweets &mdash; retweet with an added comment
+              </li>
+              <li>
+                Trending &mdash; a sidebar of popular hashtags or topics
+              </li>
+              <li>
+                Follow / unfollow &mdash; a follow button that updates who
+                shows up in your timeline
+              </li>
+            </ul>
+          </div>
+
+          <div class="step-section">
+            <div class="step-section-title">Design &amp; polish</div>
+            <ul
+              style="
+                list-style: disc;
+                padding-left: 24px;
+                margin: 8px 0;
+                font-size: 0.92rem;
+                color: var(--text-secondary);
+                line-height: 1.8;
+              "
+            >
+              <li>
+                Redesign the layout &mdash; try a different navigation style
+              </li>
+              <li>
+                Change the theme &mdash; a new color palette or a completely
+                different aesthetic
+              </li>
+              <li>
+                Add animations &mdash; a like-heart burst, skeleton loaders,
+                page transitions
+              </li>
+              <li>
+                Improve mobile responsiveness &mdash; make it feel native on
+                small screens
+              </li>
+              <li>Dark/light mode toggle &mdash; let users switch themes</li>
+            </ul>
+          </div>
+
+          <div class="step-section">
+            <div class="step-section-title">Example prompts</div>
+            <div class="prompt-box">
+              <span class="prompt-label">Prompt</span>
+              <button class="copy-btn" onclick="copyText(this)">Copy</button>
+              <div class="prompt-content">
+                Add a Bookmarks feature: a bookmark icon on each tweet that
+                toggles saved state, and a new /bookmarks route listing
+                everything the current user has saved.
+              </div>
+            </div>
+            <div class="prompt-box">
+              <span class="prompt-label">Prompt</span>
+              <button class="copy-btn" onclick="copyText(this)">Copy</button>
+              <div class="prompt-content">
+                Add a heart-burst animation when a tweet is liked: briefly
+                scale and fade a heart icon over the like button, similar to
+                a double-tap-to-like animation.
+              </div>
+            </div>
+            <div class="prompt-box">
+              <span class="prompt-label">Prompt</span>
+              <button class="copy-btn" onclick="copyText(this)">Copy</button>
+              <div class="prompt-content">
+                Implement a trending sidebar: extract the most-used hashtags
+                from tweets posted in the last 24 hours and show the top 5
+                with counts.
+              </div>
+            </div>
+          </div>
+
+          <div class="callout">
+            <svg
+              class="callout-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path
+                d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z"
+              />
+              <line x1="9" y1="21" x2="15" y2="21" />
+            </svg>
+            <span
+              >Use everything you've learned: Plan Mode for complex
+              features, agents for specialized roles, the Chrome DevTools
+              MCP to test your work, and Context7 to look up library docs.
+              This is where it all comes together.</span
+            >
+          </div>
+
+          <ul class="checklist">
+            <li onclick="toggleCheck(this)">
+              Picked a feature or improvement to build
+            </li>
+            <li onclick="toggleCheck(this)">Used Claude to implement it</li>
+            <li onclick="toggleCheck(this)">Tested it in the browser</li>
+          </ul>
+
+          <button class="complete-btn" onclick="toggleComplete(this)">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M5 12l5 5L20 7" />
+            </svg>
+            Mark as Completed
+          </button>
+        </div>
+      </article>
+
+      <!-- ============================================================
+         PART 5
+         ============================================================ -->
+      <div class="part-header">
+        <h2>Part 5: Tips, Tricks &amp; Resources</h2>
+        <p>Useful patterns, keyboard shortcuts, and links to keep learning.</p>
+      </div>
+
+      <section class="getting-started">
+        <h2>Tips &amp; Tricks</h2>
+
+        <h3>Prompting</h3>
+        <ul>
+          <li>
+            <strong>Be specific about files</strong> &mdash; "In
+            <code>src/frontend/src/routes/_app/index.tsx</code>, add a
+            bookmark button" works better than "add a bookmark button
+            somewhere".
+          </li>
+          <li>
+            <strong>Ask Claude to check the actual API response</strong>
+            &mdash; there's no interactive API reference published yet, so
+            "hit this endpoint and show me the response shape before you
+            write code against it" replaces what a Swagger doc would
+            otherwise give you.
+          </li>
+          <li>
+            <strong>Iterate, don't restart</strong> &mdash; If Claude gets
+            something wrong, tell it what's wrong in the same conversation.
+            It has full context of what it just did.
+          </li>
+          <li>
+            <strong>Paste error messages</strong> &mdash; Copy-paste the full
+            error. Claude is great at diagnosing stack traces and TypeScript
+            errors.
+          </li>
+          <li>
+            <strong>Use screenshots</strong> &mdash; "Take a screenshot and
+            tell me what's wrong" is a powerful debugging prompt when you
+            have Chrome DevTools MCP configured.
+          </li>
+        </ul>
+
+        <h3>Workflow</h3>
+        <ul>
+          <li>
+            <strong>Plan Mode for complex features</strong> &mdash; Use
+            <code>Shift+Tab</code> to toggle Plan Mode before starting a
+            multi-file feature. Review the plan, then toggle back to
+            execute.
+          </li>
+          <li>
+            <strong>One feature per conversation</strong> &mdash; Start a
+            new conversation (<code>/clear</code>) between features to keep
+            context clean and focused.
+          </li>
+          <li>
+            <strong>Compact long conversations</strong> &mdash; If a
+            conversation gets long, use <code>/compact</code> to summarize
+            the history and free up context space.
+          </li>
+          <li>
+            <strong>Let the agent cook</strong> &mdash; For big features,
+            give Claude the full requirements and let it work. Review the
+            result rather than micromanaging each step.
+          </li>
+          <li>
+            <strong>Use agents for different hats</strong> &mdash; Switch to
+            the QA agent after implementing a feature to catch bugs you
+            might have missed.
+          </li>
+        </ul>
+
+        <h3>Keyboard shortcuts</h3>
+        <ul>
+          <li>
+            <kbd
+              style="
+                display: inline-block;
+                padding: 2px 7px;
+                background: var(--bg-secondary);
+                border: 1px solid var(--border);
+                border-radius: 4px;
+                font-family: var(--font-mono);
+                font-size: 0.8rem;
+              "
+              >Shift+Tab</kbd
+            >
+            &mdash; Toggle Plan Mode
+          </li>
+          <li>
+            <kbd
+              style="
+                display: inline-block;
+                padding: 2px 7px;
+                background: var(--bg-secondary);
+                border: 1px solid var(--border);
+                border-radius: 4px;
+                font-family: var(--font-mono);
+                font-size: 0.8rem;
+              "
+              >Esc</kbd
+            >
+            &mdash; Cancel current generation
+          </li>
+          <li>
+            <kbd
+              style="
+                display: inline-block;
+                padding: 2px 7px;
+                background: var(--bg-secondary);
+                border: 1px solid var(--border);
+                border-radius: 4px;
+                font-family: var(--font-mono);
+                font-size: 0.8rem;
+              "
+              >Tab</kbd
+            >
+            &mdash; Accept Claude's suggestion
+          </li>
+          <li>
+            <kbd
+              style="
+                display: inline-block;
+                padding: 2px 7px;
+                background: var(--bg-secondary);
+                border: 1px solid var(--border);
+                border-radius: 4px;
+                font-family: var(--font-mono);
+                font-size: 0.8rem;
+              "
+              >Ctrl+C</kbd
+            >
+            &mdash; Exit Claude Code
+          </li>
+        </ul>
+
+        <h3>Useful links</h3>
+        <ul>
+          <li>
+            <a
+              href="https://docs.anthropic.com/en/docs/claude-code"
+              target="_blank"
+              >Claude Code Documentation</a
+            >
+            &mdash; Official docs covering installation, configuration,
+            CLAUDE.md, MCP servers, agents, and more
+          </li>
+          <li>
+            <a href="https://anthropic.skilljar.com" target="_blank"
+              >Anthropic Skilljar Courses</a
+            >
+            &mdash; Free courses on prompt engineering, Claude best
+            practices, and building with Claude
+          </li>
+        </ul>
+
+        <div class="important-note">
+          <strong>Note:</strong> An interactive API reference (Swagger)
+          isn't published yet &mdash; if it's added before the workshop, the
+          link will be added here.
+        </div>
+      </section>
+    </main>
+
+    <!-- ============================================================
+       Cheat Sheet Modal
+       ============================================================ -->
+    <div class="modal-overlay" id="cheatModal">
+      <div class="modal">
+        <div class="modal-header">
+          <h2>Claude Code Cheat Sheet</h2>
+          <button
+            class="modal-close"
+            onclick="closeCheatSheet()"
+            aria-label="Close"
+          >
+            &times;
+          </button>
+        </div>
+        <div class="modal-body">
+          <table class="cheat-table">
+            <thead>
+              <tr>
+                <th>Command</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>claude</td>
+                <td>Start Claude Code in current directory</td>
+              </tr>
+              <tr>
+                <td>/init</td>
+                <td>Generate CLAUDE.md from codebase analysis</td>
+              </tr>
+              <tr>
+                <td>/model</td>
+                <td>Switch between Claude models</td>
+              </tr>
+              <tr>
+                <td>Shift+Tab</td>
+                <td>Toggle Plan Mode</td>
+              </tr>
+              <tr>
+                <td>/help</td>
+                <td>Show available commands</td>
+              </tr>
+              <tr>
+                <td>/clear</td>
+                <td>Clear conversation history</td>
+              </tr>
+              <tr>
+                <td>/compact</td>
+                <td>Summarize and compact the conversation</td>
+              </tr>
+              <tr>
+                <td>Esc</td>
+                <td>Cancel current generation</td>
+              </tr>
+              <tr>
+                <td>Ctrl+C</td>
+                <td>Exit Claude Code</td>
+              </tr>
+              <tr>
+                <td>Tab</td>
+                <td>Accept Claude's suggestion</td>
+              </tr>
+              <tr>
+                <td>?</td>
+                <td>Open this cheat sheet (in workshop)</td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="modal-hint">Press <kbd>?</kbd> to toggle this sheet</p>
+        </div>
+      </div>
+    </div>
+
+    <button
+      class="scroll-top"
+      id="scrollTop"
+      onclick="scrollToTop()"
+      aria-label="Scroll to top"
+    >
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M18 15l-6-6-6 6" />
+      </svg>
+    </button>
+
+    <div class="keyboard-hint">Press <kbd>?</kbd> for cheat sheet</div>
+
+    <script>
+      /* ============================================================
+       Constants & State
+       ============================================================ */
+      const STORAGE_KEY = "claude-code-labs-xclone-progress-v2";
+
+      function loadState() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          return raw ? JSON.parse(raw) : { completed: [], checklist: {} };
+        } catch {
+          return { completed: [], checklist: {} };
+        }
+      }
+
+      function saveState(state) {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        } catch {
+          // localStorage unavailable
+        }
+      }
+
+      /* ============================================================
+       Progress Bar
+       ============================================================ */
+      function updateProgress() {
+        const state = loadState();
+        const count = state.completed.length;
+        // Counted from the DOM rather than a hardcoded constant, so this
+        // page never drifts out of sync with itself as steps are added
+        // (e.g. once Part 3's real exercise lands).
+        const total = document.querySelectorAll(".step-card").length;
+        const pct = total > 0 ? Math.round((count / total) * 100) : 0;
+        document.getElementById("progressFill").style.width = pct + "%";
+        document.getElementById("progressText").textContent =
+          count + " / " + total + " completed";
+      }
+
+      /* ============================================================
+       Card Toggle (expand/collapse)
+       ============================================================ */
+      function toggleCard(card) {
+        const wasExpanded = card.classList.contains("expanded");
+        document.querySelectorAll(".step-card.expanded").forEach((c) => {
+          if (c !== card) c.classList.remove("expanded");
+        });
+        card.classList.toggle("expanded", !wasExpanded);
+      }
+
+      /* ============================================================
+       Copy Button
+       ============================================================ */
+      function copyText(btn) {
+        const box = btn.closest(".prompt-box");
+        const content = box.querySelector(".prompt-content");
+        const text = content.textContent;
+
+        navigator.clipboard
+          .writeText(text)
+          .then(() => {
+            btn.textContent = "Copied!";
+            btn.classList.add("copied");
+            setTimeout(() => {
+              btn.textContent = "Copy";
+              btn.classList.remove("copied");
+            }, 2000);
+          })
+          .catch(() => {
+            const textarea = document.createElement("textarea");
+            textarea.value = text;
+            textarea.style.position = "fixed";
+            textarea.style.opacity = "0";
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand("copy");
+            document.body.removeChild(textarea);
+            btn.textContent = "Copied!";
+            btn.classList.add("copied");
+            setTimeout(() => {
+              btn.textContent = "Copy";
+              btn.classList.remove("copied");
+            }, 2000);
+          });
+      }
+
+      /* ============================================================
+       Checklist Toggle
+       ============================================================ */
+      function toggleCheck(li) {
+        li.classList.toggle("checked");
+
+        const card = li.closest(".step-card");
+        const feature = card.getAttribute("data-feature");
+        const index = Array.from(li.parentElement.children).indexOf(li);
+        const state = loadState();
+
+        if (!state.checklist[feature]) state.checklist[feature] = [];
+
+        if (li.classList.contains("checked")) {
+          if (!state.checklist[feature].includes(index)) {
+            state.checklist[feature].push(index);
+          }
+        } else {
+          state.checklist[feature] = state.checklist[feature].filter(
+            (i) => i !== index,
+          );
+        }
+
+        saveState(state);
+      }
+
+      /* ============================================================
+       Mark as Completed
+       ============================================================ */
+      function toggleComplete(btn) {
+        const card = btn.closest(".step-card");
+        const feature = card.getAttribute("data-feature");
+        const state = loadState();
+
+        if (state.completed.includes(feature)) {
+          state.completed = state.completed.filter((f) => f !== feature);
+          card.classList.remove("completed");
+          btn.classList.remove("is-completed");
+          btn.innerHTML =
+            '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg> Mark as Completed';
+        } else {
+          state.completed.push(feature);
+          card.classList.add("completed");
+          btn.classList.add("is-completed");
+          btn.innerHTML =
+            '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg> Completed';
+        }
+
+        saveState(state);
+        updateProgress();
+      }
+
+      /* ============================================================
+       Reset Progress
+       ============================================================ */
+      function resetProgress() {
+        if (!confirm("Reset all progress? This cannot be undone.")) return;
+
+        localStorage.removeItem(STORAGE_KEY);
+
+        document.querySelectorAll(".step-card").forEach((card) => {
+          card.classList.remove("completed");
+        });
+
+        document.querySelectorAll(".complete-btn").forEach((btn) => {
+          btn.classList.remove("is-completed");
+          btn.innerHTML =
+            '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg> Mark as Completed';
+        });
+
+        document.querySelectorAll(".checklist li").forEach((li) => {
+          li.classList.remove("checked");
+        });
+
+        updateProgress();
+      }
+
+      /* ============================================================
+       Cheat Sheet Modal
+       ============================================================ */
+      function openCheatSheet() {
+        document.getElementById("cheatModal").classList.add("open");
+      }
+
+      function closeCheatSheet() {
+        document.getElementById("cheatModal").classList.remove("open");
+      }
+
+      /* ============================================================
+       Scroll to Top
+       ============================================================ */
+      function scrollToTop() {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      /* ============================================================
+       Event Listeners
+       ============================================================ */
+      document.addEventListener("keydown", (e) => {
+        if (
+          e.key === "?" &&
+          !["INPUT", "TEXTAREA"].includes(e.target.tagName)
+        ) {
+          e.preventDefault();
+          const modal = document.getElementById("cheatModal");
+          if (modal.classList.contains("open")) {
+            closeCheatSheet();
+          } else {
+            openCheatSheet();
+          }
+        }
+
+        if (e.key === "Escape") {
+          closeCheatSheet();
+        }
+      });
+
+      document.getElementById("cheatModal").addEventListener("click", (e) => {
+        if (e.target === e.currentTarget) {
+          closeCheatSheet();
+        }
+      });
+
+      window.addEventListener(
+        "scroll",
+        () => {
+          const btn = document.getElementById("scrollTop");
+          if (window.scrollY > 400) {
+            btn.classList.add("visible");
+          } else {
+            btn.classList.remove("visible");
+          }
+        },
+        { passive: true },
+      );
+
+      /* ============================================================
+       Restore State on Load
+       ============================================================ */
+      function restoreState() {
+        const state = loadState();
+
+        state.completed.forEach((feature) => {
+          const card = document.querySelector(
+            `.step-card[data-feature="${feature}"]`,
+          );
+          if (!card) return;
+
+          card.classList.add("completed");
+          const btn = card.querySelector(".complete-btn");
+          if (btn) {
+            btn.classList.add("is-completed");
+            btn.innerHTML =
+              '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg> Completed';
+          }
+        });
+
+        Object.keys(state.checklist).forEach((feature) => {
+          const card = document.querySelector(
+            `.step-card[data-feature="${feature}"]`,
+          );
+          if (!card) return;
+
+          const items = card.querySelectorAll(".checklist li");
+          state.checklist[feature].forEach((index) => {
+            if (items[index]) items[index].classList.add("checked");
+          });
+        });
+
+        updateProgress();
+      }
+
+      // Normalize prompt-content: strip common leading whitespace so
+      // HTML indentation doesn't bleed into the pre-wrap display.
+      function normalizePromptContent(el) {
+        const raw = el.textContent;
+        const lines = raw.split('\n');
+        const contentLines = lines.filter(l => l.trim().length > 0);
+        if (contentLines.length === 0) return;
+        const minIndent = Math.min(...contentLines.map(l => {
+          const m = l.match(/^(\s*)/);
+          return m ? m[1].length : 0;
+        }));
+        el.textContent = lines
+          .map(l => l.slice(minIndent))
+          .join('\n')
+          .replace(/^\n+/, '')
+          .replace(/\n+$/, '');
+      }
+
+      document.querySelectorAll('.prompt-content, .project-structure').forEach(normalizePromptContent);
+
+      // Init
+      restoreState();
+    </script>
+  </body>
+</html>
