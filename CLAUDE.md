@@ -1,56 +1,137 @@
-# X Clone Starter
+# CLAUDE.md
 
-A frontend for an X (Twitter)-style app. The API is already deployed — this repo is
-frontend-only, living under `src/frontend/`.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Stack
+## What this is
 
-- **React 19** + **Vite** + **TypeScript**
-- **TanStack Router** — file-based routing (`src/frontend/src/routes/`)
-- **TanStack Query** — server state / data fetching
-- **Tailwind CSS v4** + shadcn-style primitives in `src/frontend/src/components/ui/`
-- **better-auth** (React client) for authentication
-- **Vitest** + `@testing-library/react` for tests
+A frontend for an X (Twitter)-style app. The API is already deployed and is **not** in this repo —
+all code lives under `src/frontend/`. Start Claude Code from the repo root (where this file
+lives), not from `src/frontend/`.
 
-## Structure
-
-```
-src/frontend/src/
-  routes/          File-based routes (TanStack Router). `_app.tsx` and `_auth.tsx` are
-                   pathless layout routes — `_app` requires a signed-in session,
-                   `_auth` requires a signed-out one (see their `beforeLoad` guards).
-  components/
-    ui/            Generic, feature-agnostic primitives (button, dialog, form, ...)
-  hooks/           Reusable React hooks
-  lib/             Framework-agnostic utilities (auth client, formatting, session query)
-  stores/          Client-side state outside React Query (currently: theme)
-```
-
-## Conventions
-
-- **Routing**: add a new page by adding a file under `src/frontend/src/routes/`. Auth-gated
-  pages go under `_app/`; the layout at `src/frontend/src/routes/_app.tsx` renders the
-  header/nav shared by all of them. `routeTree.gen.ts` is generated — never edit it by hand, it
-  regenerates on `pnpm dev`/`pnpm build`.
-- **Data fetching**: API calls live in `src/frontend/src/queries/<domain>.ts` (a directory you'll
-  create) as plain `fetch` calls wrapped in `queryOptions(...)` (see `lib/session.ts` for the
-  pattern). Always pass `credentials: "include"` — auth is cookie-based.
-- **Auth**: `lib/auth-client.ts` wraps `better-auth/react`; `lib/session.ts` exposes
-  `sessionQueryOptions` for reading the current session via React Query.
-- **Env config**: the API base URL is read from `VITE_API_URL` (see
-  `src/frontend/.env.example` and `src/frontend/vite.config.ts`'s `/api` proxy) — never hardcode
-  the API origin in application code.
-
-## Workshop note
-
-- The API is shared by everyone in the room. When testing in the browser (including via
-  MCP browser tools), sign in with your own account — sign up if you haven't — rather than
-  the shared fallback test account from `workshop.html`. Likes, retweets, and follows are
-  per-account state shared live with whoever else is using that account.
+**Stack:** React 19 · Vite 7 · TypeScript · TanStack Router (file-based) · TanStack Query ·
+TanStack Store · Tailwind CSS v4 · shadcn-style primitives · better-auth · Vitest.
 
 ## Commands (run from `src/frontend/`)
 
-- `pnpm dev` — start the dev server
-- `pnpm build` — typecheck + production build
-- `pnpm lint` — ESLint
-- `pnpm test` — Vitest
+| Command | What it does |
+| --- | --- |
+| `pnpm dev` | Vite dev server on `:5173` (also regenerates `routeTree.gen.ts`) |
+| `pnpm build` | `tsc -b && vite build` — **this is the only real typecheck** |
+| `pnpm lint` | ESLint (does *not* typecheck) |
+| `pnpm test` | Vitest, single run |
+| `pnpm test:watch` | Vitest in watch mode |
+| `pnpm test path/to/file.test.ts` | One test file |
+| `pnpm test -t "test name"` | One test case by name |
+
+pnpm 11 needs **Node ≥ 22.13** (older Node crashes with `No such built-in module: node:sqlite`),
+despite the README's "Node 20+".
+
+Open the dev app at **`http://localhost:5173`**, never `127.0.0.1`, and don't start Vite with
+`--host 127.0.0.1`. The proxy's `changeOrigin` rewrites only `Host`, so the browser's `Origin`
+reaches the API unchanged, and the API allows only `http://localhost:5173`. Sign-in from any other
+origin fails with `403 INVALID_ORIGIN`, which the form shows as "Invalid origin".
+
+## Architecture
+
+### Router ⇄ Query wiring
+
+`main.tsx` creates the single `QueryClient` and hands it to the router as context
+(`createRouter({ routeTree, context: { queryClient } })`), typed by `RouterContext` in
+`routes/__root.tsx`. That is what lets route guards and loaders read server state *before*
+render: `beforeLoad` calls `context.queryClient.ensureQueryData(...)` and the component then
+calls `useQuery(...)` on the same options object and gets a cache hit. Follow this pattern for
+any new prefetching route — don't fetch in `useEffect`.
+
+Two pathless layout routes hold the auth guards, mirrored in opposite directions:
+
+- `routes/_app.tsx` — requires a session, else `redirect({ to: "/sign-in" })`. Also renders the
+  header/nav and the `max-w-[600px]` main column shared by every signed-in page.
+- `routes/_auth.tsx` — requires *no* session, else `redirect({ to: "/" })`. Without it, a stale
+  `/sign-in` history entry would re-render the form while signed in.
+
+So: auth-gated pages go in `routes/_app/`, signed-out pages in `routes/_auth/`.
+
+Page titles come from the route's `head: () => ({ meta: seo({ title: "… | X Clone" }) })`
+(`lib/seo.ts`), rendered by `<HeadContent />` in `__root.tsx`. Some helpers are already written for
+the tweet and profile features but aren't used yet: `lib/format-relative-time.ts`
+(`"3s"`/`"4h"`/`"2d"` timestamps) and `lib/format-join-date.ts`. `lib/user.ts`'s
+`getDisplayName` is the fallback from name to email for showing a user's name.
+
+`routeTree.gen.ts` is generated by the `TanStackRouterVite` plugin (with `autoCodeSplitting`) on
+`pnpm dev`/`pnpm build` — **never edit it by hand**.
+
+### Auth and the API origin
+
+`lib/auth-client.ts` calls `createAuthClient()` with **no `baseURL`** on purpose: the client hits
+`/api/auth/*` on the app's own origin, and Vite's `server.proxy` (`vite.config.ts`) forwards
+`/api` to `VITE_API_URL` (set in `src/frontend/.env`). That is why no API origin may ever appear
+in application code — same rule for your own `fetch` calls, which use relative `/api/...` paths.
+
+`inferAdditionalFields` declares `handle` as `{ type: "string", input: false }`; that must keep
+matching the server's field config or TS will demand `handle` in the sign-up payload.
+
+`lib/session.ts` exports `sessionQueryOptions` (query key `["session"]`) — the canonical read of
+the current user, and the template for every other query. After sign-in/sign-up, invalidate
+`["session"]`; after sign-out, `queryClient.clear()`.
+
+### Data fetching
+
+New API calls go in `src/frontend/src/queries/<domain>.ts` (create the directory) as plain
+`fetch` wrapped in `queryOptions(...)`, mirroring `lib/session.ts`. Always pass
+`credentials: "include"` — auth is cookie-based. Global defaults are `staleTime` 5 min,
+`gcTime` 10 min (`main.tsx`).
+
+**There is no API documentation or Swagger**, so confirm an endpoint's real response shape before
+writing code against it. `workshop.html` names the endpoints in scope: `/api/tweets`,
+`/api/timeline`, `/api/tweets/:id/replies`, `/api/users/:handle` and `/api/users/:handle/tweets`.
+Probe them **from the signed-in browser session** (Chrome DevTools MCP), not with an
+unauthenticated `curl` — the API returns `401` for every path it doesn't recognise as an
+authenticated request, including paths that don't exist, so a bare `curl` can't tell you whether
+an endpoint is real.
+
+### Theming
+
+Three themes — `light`, `dim`, `dark` — selected by a `data-theme` attribute on `<html>`.
+`stores/theme.ts` (TanStack Store) owns the state, persists to `localStorage`, and is imported for
+side effects in `main.tsx` so the theme applies before first paint. Every colour is a CSS variable
+in `index.css`, with separate values per theme, mapped to Tailwind tokens through `@theme inline`.
+Style with semantic classes (`bg-background`, `text-foreground`, `text-muted-foreground`,
+`border-border`) — never raw hex values.
+
+Tailwind's `dark:` variant is redefined in `index.css` with `@custom-variant dark` to match
+`data-theme="dim"` or `"dark"` (the same rule as `useIsDarkTheme()`), not the OS
+`prefers-color-scheme`. It exists for the shadcn primitives in `components/ui/` (`button.tsx`,
+`input.tsx`), which use it. In app code, prefer semantic tokens, which already change per theme;
+use `dark:` only for a tweak that can't be expressed as a token.
+
+### Forms
+
+The sign-in/sign-up routes are the reference: `react-hook-form` + `zodResolver` + the
+`components/ui/form.tsx` primitives, submitted through `hooks/use-auth-submit.ts`, which maps
+better-auth error codes to human strings via `lib/auth-errors.ts`, invalidates the session query
+and navigates. Reuse `useAuthSubmit` rather than re-implementing that sequence.
+
+## TypeScript notes
+
+- `@/*` aliases `src/*` (set in both `tsconfig.app.json` and `vite.config.ts`).
+- `verbatimModuleSyntax` is on — type-only imports must use `import type`.
+- Tests run on Vitest globals + jsdom (`vite.config.ts`'s `test` block, `src/test/setup.ts`), so
+  `describe`/`it`/`expect` are available without imports, as are jest-dom matchers.
+
+## Issue tracking
+
+Tracked work items live in `docs/issues/<slug>.md` as Markdown with a `status` field that goes
+from `open` to `done`. They're filed with `/create-issue` and resolved with `/close-issue`.
+
+## Workflow
+
+- Before considering a task complete, run `pnpm lint` **and** `pnpm build` (lint alone won't
+  catch type errors) and fix what they report.
+- Prefer editing existing components over creating new ones.
+
+## Workshop note
+
+The API is shared with everyone else in the room. When testing in the browser (including via the
+Chrome DevTools MCP server configured in `.mcp.json`), sign in with your own account — sign up if
+you don't have one — rather than the shared fallback test account in `workshop.html`. Likes,
+retweets and follows are per-account state visible live to anyone else on that account.

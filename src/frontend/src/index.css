@@ -3,10 +3,17 @@
 
 /*
  * x-clone theme system.
- * Three named themes toggled via `data-theme` on <html> — NOT the Tailwind
- * `dark` variant. `applyTheme()` in stores/theme.ts only ever sets the
- * `data-theme` attribute; every colour value lives here as a CSS variable.
+ * Three named themes toggled via `data-theme` on <html>. `applyTheme()` in
+ * stores/theme.ts only ever sets the `data-theme` attribute; every colour
+ * value lives here as a CSS variable.
  */
+
+/*
+ * Tie Tailwind's `dark:` variant (used by the shadcn primitives) to the app
+ * theme instead of the OS `prefers-color-scheme` default. `dim` and `dark`
+ * both count as dark, matching `useIsDarkTheme()`.
+ */
+@custom-variant dark (&:where([data-theme="dim"], [data-theme="dim"] *, [data-theme="dark"], [data-theme="dark"] *));
 
 [data-theme="light"] {
   --bg-primary: #ffffff;

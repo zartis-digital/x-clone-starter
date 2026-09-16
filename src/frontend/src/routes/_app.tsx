@@ -1,12 +1,19 @@
-import { createFileRoute, Outlet, redirect, useNavigate } from "@tanstack/react-router"
+import {
+  createFileRoute,
+  Link,
+  Outlet,
+  redirect,
+  useNavigate,
+} from "@tanstack/react-router"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { Logout01Icon } from "@hugeicons/core-free-icons"
+import { Bookmark02Icon, Logout01Icon } from "@hugeicons/core-free-icons"
 import { ThemeSwitcher } from "@/components/theme-switcher"
 import { Button } from "@/components/ui/button"
 import { signOut } from "@/lib/auth-client"
 import { sessionQueryOptions } from "@/lib/session"
 import { getDisplayName } from "@/lib/user"
+import { useBookmarksStorageSync } from "@/queries/bookmarks"
 
 export const Route = createFileRoute("/_app")({
   beforeLoad: async ({ context }) => {
@@ -26,6 +33,7 @@ function AppLayout() {
   const queryClient = useQueryClient()
   const { data: session } = useQuery(sessionQueryOptions)
   const displayName = session?.user ? getDisplayName(session.user) : "You"
+  useBookmarksStorageSync()
 
   const handleSignOut = async () => {
     await signOut()
@@ -36,8 +44,19 @@ function AppLayout() {
   return (
     <div className="flex min-h-screen w-full flex-col bg-background">
       <header className="flex items-center justify-between border-b border-border px-6 py-4">
-        <span className="text-lg font-bold">x-clone</span>
+        <Link to="/" className="text-lg font-bold">
+          x-clone
+        </Link>
         <div className="flex items-center gap-3">
+          <Button asChild variant="ghost">
+            <Link
+              to="/bookmarks"
+              activeProps={{ className: "text-primary", "aria-current": "page" }}
+            >
+              <HugeiconsIcon icon={Bookmark02Icon} className="size-4" />
+              Bookmarks
+            </Link>
+          </Button>
           <ThemeSwitcher />
           <Button type="button" variant="outline" onClick={handleSignOut}>
             <HugeiconsIcon icon={Logout01Icon} className="size-4" />
