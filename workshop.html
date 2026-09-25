@@ -3608,7 +3608,10 @@
                 with an optimistic update, and make sure your home
                 timeline (Step 13) reflects the change &mdash; following
                 someone should surface their tweets, unfollowing should
-                drop them.
+                drop them. Also wire the search box from Step 14 so that
+                focusing it with an empty query suggests up to 5 users to
+                follow &mdash; that way you don't need to ask other
+                participants for their test-account handles.
               </p>
             </li>
             <li>
@@ -3617,7 +3620,7 @@
                 <span class="prompt-label">Claude Code</span>
                 <button class="copy-btn" onclick="copyText(this)">Copy</button>
                 <div class="prompt-content">
-                  /create-issue "Follow / Unfollow" "Add a follow/unfollow control on the tweet author. Wire it to POST/DELETE the follow endpoints, update optimistically, and make sure the home timeline reflects the current follow graph."
+                  /create-issue "Follow / Unfollow" "Add a follow/unfollow control on the tweet author. Wire it to POST/DELETE the follow endpoints, update optimistically, and make sure the home timeline reflects the current follow graph. Also, when the search box (Step 14) is focused with an empty query, suggest up to 5 users to follow instead of showing no results."
                 </div>
               </div>
             </li>
@@ -3647,9 +3650,10 @@
                 <span class="prompt-label">Prompt</span>
                 <button class="copy-btn" onclick="copyText(this)">Copy</button>
                 <div class="prompt-content">
-                  Open http://localhost:5173, follow a second
-                  participant's account, confirm their tweets appear in
-                  your home timeline, then unfollow and confirm they
+                  Open http://localhost:5173, click the empty search box
+                  and confirm it suggests up to 5 users to follow, follow a
+                  second participant's account, confirm their tweets appear
+                  in your home timeline, then unfollow and confirm they
                   drop out. Take a screenshot of both states.
                 </div>
               </div>
@@ -3677,6 +3681,10 @@
             <li onclick="toggleCheck(this)">
               Done when: unfollowing them removes their tweets from
               your home timeline
+            </li>
+            <li onclick="toggleCheck(this)">
+              Done when: focusing the empty search box suggests up to 5
+              users to follow
             </li>
           </ul>
 
