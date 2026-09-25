@@ -1171,6 +1171,76 @@
           </div>
         </div>
 
+        <h3>Preflight Checklist (before the workshop)</h3>
+        <div class="callout">
+          <svg
+            class="callout-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path
+              d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z"
+            />
+            <line x1="9" y1="21" x2="15" y2="21" />
+          </svg>
+          <span
+            >Run this before the workshop, not on the day &mdash; if
+            anything below fails, you'll have time to fix it instead of
+            losing session time to it.</span
+          >
+        </div>
+
+        <div class="prereq-card">
+          <h4>Environment check</h4>
+          <ul>
+            <li>
+              <code>node -v</code> &mdash; done when it prints
+              <code>v20</code> or higher
+            </li>
+            <li>
+              <code>pnpm -v</code> &mdash; done when it prints
+              <code>9</code> or higher
+            </li>
+            <li>
+              <code>claude --version</code>, then run
+              <code>claude</code> and confirm you're already
+              authenticated &mdash; done when it responds instead of
+              prompting you to log in
+            </li>
+            <li>
+              Open <code>https://workshops.zartis.com</code> in a
+              browser &mdash; done when it responds, not a DNS/network
+              error
+            </li>
+          </ul>
+        </div>
+
+        <div class="callout">
+          <svg
+            class="callout-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path
+              d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z"
+            />
+            <line x1="9" y1="21" x2="15" y2="21" />
+          </svg>
+          <span
+            >New to Claude, or no active subscription? Ask your Zartis
+            contact for a backup API key or subscription token ahead of
+            time, so an auth issue on the day doesn't block you.</span
+          >
+        </div>
+
         <h3>Setup</h3>
         <div class="prompt-box">
           <span class="prompt-label">Terminal</span>
@@ -2172,6 +2242,12 @@
         </div>
       </article>
 
+      <div class="info-card" style="text-align: center">
+        <strong>&#9749; Break &mdash; Part 1 down.</strong>
+        Stretch your legs, refill your coffee. Back in 5 minutes for
+        Part 2: Building the Orchestration Layer.
+      </div>
+
       <!-- ============================================================
          PART 2
          ============================================================ -->
@@ -3073,6 +3149,13 @@
         </div>
       </article>
 
+      <div class="info-card" style="text-align: center">
+        <strong>&#9749; Break &mdash; Part 2 survived intact.</strong>
+        Quick show-and-tell first (show off your subagent/skill/hook),
+        then stretch, refill. Back in 10 minutes for Part 3: Building
+        Features.
+      </div>
+
       <!-- ============================================================
          PART 3
          ============================================================ -->
@@ -3082,8 +3165,8 @@
           The backend API is already deployed and fully functional. The
           frontend's layout, routing, and auth already work &mdash; nothing
           else is built yet. Use everything from Parts 1 &amp; 2 to build
-          five features from scratch, one at a time. (~75-90 min for the
-          first four; the fifth is an optional stretch.)
+          the two core features from scratch, one at a time: the composer,
+          then the timeline. (~35-40 min combined.)
         </p>
       </div>
 
@@ -3233,7 +3316,6 @@
           </button>
         </div>
       </article>
-
       <!-- Step 13 -->
       <article class="step-card" data-feature="13">
         <div class="step-header" onclick="toggleCard(this.parentElement)">
@@ -3362,11 +3444,278 @@
         </div>
       </article>
 
+      <!-- ============================================================
+         PART 4
+         ============================================================ -->
+      <div class="part-header">
+        <h2>Part 4: New Features</h2>
+        <p>
+          The composer and timeline work &mdash; now it's time to make the
+          app feel shared. Build Search and Follow/Unfollow first (the
+          rest of the room is live data now), then Like &amp; Retweet, then
+          optional stretch goals &mdash; Inline Reply and a Profile Page
+          &mdash; and finally an open-ended feature of your own choosing.
+        </p>
+      </div>
+
       <!-- Step 14 -->
       <article class="step-card" data-feature="14">
         <div class="step-header" onclick="toggleCard(this.parentElement)">
           <div class="step-header-left">
             <span class="step-number">14</span>
+            <div class="step-title-group">
+              <div class="step-title">Search</div>
+              <div class="step-desc">
+                Find tweets or users with a search bar
+              </div>
+            </div>
+          </div>
+          <div class="step-header-right">
+            <span class="step-time">~20 min</span>
+            <svg
+              class="chevron"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </div>
+        </div>
+        <div class="step-body">
+          <ol>
+            <li>
+              <strong>Context</strong>
+              <p>
+                There's no way to find anyone else in the shared backend
+                yet &mdash; everyone in the room is live data now. Add a
+                search bar (nav/header) that queries tweets and/or users
+                and renders matching results, reusing
+                <code>TweetCard</code> from Step 13 for tweet results.
+              </p>
+            </li>
+            <li>
+              <strong>File the issue with <code>/create-issue</code></strong>
+              <div class="prompt-box">
+                <span class="prompt-label">Claude Code</span>
+                <button class="copy-btn" onclick="copyText(this)">Copy</button>
+                <div class="prompt-content">
+                  /create-issue "Search" "Add a search bar to the nav/header that queries tweets and/or users and renders matching results, reusing TweetCard for tweet results. Handle empty and no-match states."
+                </div>
+              </div>
+            </li>
+            <li>
+              <strong>Implement from the issue</strong>
+              <div class="prompt-box">
+                <span class="prompt-label">Prompt</span>
+                <button class="copy-btn" onclick="copyText(this)">Copy</button>
+                <div class="prompt-content">
+                  Open the issue file in docs/issues/ for search and
+                  implement everything it describes, from scratch.
+                </div>
+              </div>
+            </li>
+            <li>
+              <strong>Close the issue</strong>
+              <div class="prompt-box">
+                <span class="prompt-label">Claude Code</span>
+                <button class="copy-btn" onclick="copyText(this)">Copy</button>
+                <div class="prompt-content">/close-issue search</div>
+              </div>
+            </li>
+            <li>
+              <strong>Test it</strong>
+              <div class="prompt-box">
+                <span class="prompt-label">Prompt</span>
+                <button class="copy-btn" onclick="copyText(this)">Copy</button>
+                <div class="prompt-content">
+                  Open http://localhost:5173, search for another
+                  participant's handle or a keyword from a tweet you've
+                  seen in the timeline, and take a screenshot of the
+                  matching results.
+                </div>
+              </div>
+            </li>
+          </ol>
+
+          <details class="hint">
+            <summary>Stuck? Where to put things</summary>
+            <div class="hint-content">
+              <ul>
+                <li>
+                  <code>src/frontend/src/queries/</code> &mdash; where
+                  the search request belongs, following the same
+                  pattern as the other query files
+                </li>
+              </ul>
+            </div>
+          </details>
+
+          <ul class="checklist">
+            <li onclick="toggleCheck(this)">
+              Done when: searching a known handle or keyword returns
+              matching results
+            </li>
+            <li onclick="toggleCheck(this)">
+              Done when: an empty or no-match query shows an empty
+              state, not an error
+            </li>
+          </ul>
+
+          <button class="complete-btn" onclick="toggleComplete(this)">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M5 12l5 5L20 7" />
+            </svg>
+            Mark as Completed
+          </button>
+        </div>
+      </article>
+
+      <!-- Step 15 -->
+      <article class="step-card" data-feature="15">
+        <div class="step-header" onclick="toggleCard(this.parentElement)">
+          <div class="step-header-left">
+            <span class="step-number">15</span>
+            <div class="step-title-group">
+              <div class="step-title">Follow / Unfollow</div>
+              <div class="step-desc">
+                Follow a user to see their tweets in your timeline
+              </div>
+            </div>
+          </div>
+          <div class="step-header-right">
+            <span class="step-time">~20 min</span>
+            <svg
+              class="chevron"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </div>
+        </div>
+        <div class="step-body">
+          <ol>
+            <li>
+              <strong>Context</strong>
+              <p>
+                <code>TweetCard</code> (built in Step 13) has no way to
+                follow its author yet. Add a follow/unfollow control on
+                the tweet author, wired to the follow/unfollow endpoints
+                with an optimistic update, and make sure your home
+                timeline (Step 13) reflects the change &mdash; following
+                someone should surface their tweets, unfollowing should
+                drop them.
+              </p>
+            </li>
+            <li>
+              <strong>File the issue with <code>/create-issue</code></strong>
+              <div class="prompt-box">
+                <span class="prompt-label">Claude Code</span>
+                <button class="copy-btn" onclick="copyText(this)">Copy</button>
+                <div class="prompt-content">
+                  /create-issue "Follow / Unfollow" "Add a follow/unfollow control on the tweet author. Wire it to POST/DELETE the follow endpoints, update optimistically, and make sure the home timeline reflects the current follow graph."
+                </div>
+              </div>
+            </li>
+            <li>
+              <strong>Implement from the issue</strong>
+              <div class="prompt-box">
+                <span class="prompt-label">Prompt</span>
+                <button class="copy-btn" onclick="copyText(this)">Copy</button>
+                <div class="prompt-content">
+                  Open the issue file in docs/issues/ for follow &amp;
+                  unfollow and implement everything it describes, from
+                  scratch.
+                </div>
+              </div>
+            </li>
+            <li>
+              <strong>Close the issue</strong>
+              <div class="prompt-box">
+                <span class="prompt-label">Claude Code</span>
+                <button class="copy-btn" onclick="copyText(this)">Copy</button>
+                <div class="prompt-content">/close-issue follow-unfollow</div>
+              </div>
+            </li>
+            <li>
+              <strong>Test it</strong>
+              <div class="prompt-box">
+                <span class="prompt-label">Prompt</span>
+                <button class="copy-btn" onclick="copyText(this)">Copy</button>
+                <div class="prompt-content">
+                  Open http://localhost:5173, follow a second
+                  participant's account, confirm their tweets appear in
+                  your home timeline, then unfollow and confirm they
+                  drop out. Take a screenshot of both states.
+                </div>
+              </div>
+            </li>
+          </ol>
+
+          <details class="hint">
+            <summary>Stuck? Where to put things</summary>
+            <div class="hint-content">
+              <ul>
+                <li>
+                  <code>src/frontend/src/queries/</code> &mdash; where
+                  follow/unfollow requests belong, following the
+                  <code>queryOptions</code> pattern used elsewhere
+                </li>
+              </ul>
+            </div>
+          </details>
+
+          <ul class="checklist">
+            <li onclick="toggleCheck(this)">
+              Done when: following a user makes their tweets appear in
+              your home timeline
+            </li>
+            <li onclick="toggleCheck(this)">
+              Done when: unfollowing them removes their tweets from
+              your home timeline
+            </li>
+          </ul>
+
+          <button class="complete-btn" onclick="toggleComplete(this)">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M5 12l5 5L20 7" />
+            </svg>
+            Mark as Completed
+          </button>
+        </div>
+      </article>
+
+      <!-- Step 16 -->
+      <article class="step-card" data-feature="16">
+        <div class="step-header" onclick="toggleCard(this.parentElement)">
+          <div class="step-header-left">
+            <span class="step-number">16</span>
             <div class="step-title-group">
               <div class="step-title">Like &amp; Retweet</div>
               <div class="step-desc">
@@ -3483,15 +3832,21 @@
         </div>
       </article>
 
-      <!-- Step 15 -->
-      <article class="step-card" data-feature="15">
+      <!-- Step 17 -->
+      <article class="step-card" data-feature="17">
         <div class="step-header" onclick="toggleCard(this.parentElement)">
           <div class="step-header-left">
-            <span class="step-number">15</span>
+            <span class="step-number">17</span>
             <div class="step-title-group">
-              <div class="step-title">Inline Reply</div>
+              <div class="step-title">
+                Inline Reply
+                <span class="badge badge-bonus" style="margin-left: 8px"
+                  >Stretch</span
+                >
+              </div>
               <div class="step-desc">
-                Reply to a tweet and see it inline
+                Optional &mdash; pick up if Search, Follow/Unfollow, and Like
+                &amp; Retweet are done early
               </div>
             </div>
           </div>
@@ -3616,11 +3971,11 @@
         </div>
       </article>
 
-      <!-- Step 16 -->
-      <article class="step-card" data-feature="16">
+      <!-- Step 18 -->
+      <article class="step-card" data-feature="18">
         <div class="step-header" onclick="toggleCard(this.parentElement)">
           <div class="step-header-left">
-            <span class="step-number">16</span>
+            <span class="step-number">18</span>
             <div class="step-title-group">
               <div class="step-title">
                 Profile Page
@@ -3629,7 +3984,7 @@
                 >
               </div>
               <div class="step-desc">
-                Optional &mdash; only if the first four are done early
+                Optional &mdash; only if the first three are done early
               </div>
             </div>
           </div>
@@ -3651,7 +4006,7 @@
         <div class="step-body">
           <p>
             This one's outside the core time budget above &mdash; only pick
-            it up if your group finishes Steps 12-15 early. It's structured
+            it up if your group finishes Steps 12-17 early. It's structured
             the same way as the rest.
           </p>
           <ol>
@@ -3708,25 +4063,18 @@
         </div>
       </article>
 
-      <!-- ============================================================
-         PART 4
-         ============================================================ -->
-      <div class="part-header">
-        <h2>Part 4: Free Roam</h2>
-        <p>
-          You've learned the core workflows and built real features. Now
-          it's your turn &mdash; pick any direction and make this app your
-          own.
-        </p>
-      </div>
-
-      <!-- Step 17 -->
-      <article class="step-card" data-feature="17">
+      <!-- Step 19 -->
+      <article class="step-card" data-feature="19">
         <div class="step-header" onclick="toggleCard(this.parentElement)">
           <div class="step-header-left">
-            <span class="step-number">17</span>
+            <span class="step-number">19</span>
             <div class="step-title-group">
-              <div class="step-title">Make It Yours</div>
+              <div class="step-title">
+                Make It Yours
+                <span class="badge badge-bonus" style="margin-left: 8px"
+                  >Stretch</span
+                >
+              </div>
               <div class="step-desc">
                 Add any feature, redesign, or improvement you want
               </div>
@@ -3770,9 +4118,6 @@
                 unread badge
               </li>
               <li>
-                Search &mdash; find tweets or users with a search bar
-              </li>
-              <li>
                 Bookmarks &mdash; save tweets and view them on a dedicated
                 page
               </li>
@@ -3781,10 +4126,6 @@
               </li>
               <li>
                 Trending &mdash; a sidebar of popular hashtags or topics
-              </li>
-              <li>
-                Follow / unfollow &mdash; a follow button that updates who
-                shows up in your timeline
               </li>
             </ul>
           </div>
