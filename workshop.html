@@ -3172,11 +3172,16 @@
       </div>
 
       <div class="info-card">
-        <strong>No Swagger yet:</strong> there's no interactive API
-        reference published for this workshop. Ask Claude to make a test
-        request against the relevant endpoint and inspect the actual
-        response shape before writing code against it &mdash; that's a
-        fine substitute.
+        <strong>Swagger:</strong> an interactive API reference is available
+        at
+        <a
+          href="https://workshops.zartis.com/x-clone-api/api/docs"
+          target="_blank"
+          rel="noopener"
+          >workshops.zartis.com/x-clone-api/api/docs</a
+        >. You can also ask Claude to make a test request against the
+        relevant endpoint and inspect the actual response shape before
+        writing code against it.
       </div>
 
       <!-- Step 12 -->
@@ -4124,17 +4129,23 @@
             >
               <li>
                 Notifications &mdash; likes, follows, and replies with an
-                unread badge
+                unread badge (frontend-only tracking &mdash; the real API
+                has no mark-as-read endpoint)
               </li>
               <li>
                 Bookmarks &mdash; save tweets and view them on a dedicated
-                page
-              </li>
-              <li>
-                Quote tweets &mdash; retweet with an added comment
+                page (frontend-only, stored in localStorage &mdash; no
+                backend, will not sync across devices)
               </li>
               <li>
                 Trending &mdash; a sidebar of popular hashtags or topics
+                (derived from tweets already loaded client-side &mdash; no
+                backend involved)
+              </li>
+              <li>
+                Quote tweets &mdash; not viable as a workshop project: the
+                API has no backend support, and it can't be faked
+                frontend-only since other people need to see it
               </li>
             </ul>
           </div>
@@ -4178,7 +4189,8 @@
               <div class="prompt-content">
                 Add a Bookmarks feature: a bookmark icon on each tweet that
                 toggles saved state, and a new /bookmarks route listing
-                everything the current user has saved.
+                everything the current user has saved. There is no backend
+                for this &mdash; persist bookmarks in localStorage.
               </div>
             </div>
             <div class="prompt-box">
@@ -4271,10 +4283,9 @@
           </li>
           <li>
             <strong>Ask Claude to check the actual API response</strong>
-            &mdash; there's no interactive API reference published yet, so
-            "hit this endpoint and show me the response shape before you
-            write code against it" replaces what a Swagger doc would
-            otherwise give you.
+            &mdash; the Swagger reference covers the shape, but hitting the
+            endpoint and showing Claude the real response before writing
+            code against it still catches surprises Swagger won't.
           </li>
           <li>
             <strong>Iterate, don't restart</strong> &mdash; If Claude gets
@@ -4408,9 +4419,13 @@
         </ul>
 
         <div class="important-note">
-          <strong>Note:</strong> An interactive API reference (Swagger)
-          isn't published yet &mdash; if it's added before the workshop, the
-          link will be added here.
+          <strong>Note:</strong> Interactive API reference (Swagger):
+          <a
+            href="https://workshops.zartis.com/x-clone-api/api/docs"
+            target="_blank"
+            rel="noopener"
+            >workshops.zartis.com/x-clone-api/api/docs</a
+          >
         </div>
       </section>
     </main>
