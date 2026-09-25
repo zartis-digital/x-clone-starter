@@ -3165,8 +3165,9 @@
           The backend API is already deployed and fully functional. The
           frontend's layout, routing, and auth already work &mdash; nothing
           else is built yet. Use everything from Parts 1 &amp; 2 to build
-          the two core features from scratch, one at a time: the composer,
-          then the timeline. (~35-40 min combined.)
+          four features from scratch, one at a time: the composer, then
+          the timeline, then Search, then Follow/Unfollow. (~75-80 min
+          combined.)
         </p>
       </div>
 
@@ -3444,20 +3445,6 @@
         </div>
       </article>
 
-      <!-- ============================================================
-         PART 4
-         ============================================================ -->
-      <div class="part-header">
-        <h2>Part 4: New Features</h2>
-        <p>
-          The composer and timeline work &mdash; now it's time to make the
-          app feel shared. Build Search and Follow/Unfollow first (the
-          rest of the room is live data now), then Like &amp; Retweet, then
-          optional stretch goals &mdash; Inline Reply and a Profile Page
-          &mdash; and finally an open-ended feature of your own choosing.
-        </p>
-      </div>
-
       <!-- Step 14 -->
       <article class="step-card" data-feature="14">
         <div class="step-header" onclick="toggleCard(this.parentElement)">
@@ -3621,7 +3608,10 @@
                 with an optimistic update, and make sure your home
                 timeline (Step 13) reflects the change &mdash; following
                 someone should surface their tweets, unfollowing should
-                drop them.
+                drop them. Also wire the search box from Step 14 so that
+                focusing it with an empty query suggests up to 5 users to
+                follow &mdash; that way you don't need to ask other
+                participants for their test-account handles.
               </p>
             </li>
             <li>
@@ -3630,7 +3620,7 @@
                 <span class="prompt-label">Claude Code</span>
                 <button class="copy-btn" onclick="copyText(this)">Copy</button>
                 <div class="prompt-content">
-                  /create-issue "Follow / Unfollow" "Add a follow/unfollow control on the tweet author. Wire it to POST/DELETE the follow endpoints, update optimistically, and make sure the home timeline reflects the current follow graph."
+                  /create-issue "Follow / Unfollow" "Add a follow/unfollow control on the tweet author. Wire it to POST/DELETE the follow endpoints, update optimistically, and make sure the home timeline reflects the current follow graph. Also, when the search box (Step 14) is focused with an empty query, suggest up to 5 users to follow instead of showing no results."
                 </div>
               </div>
             </li>
@@ -3660,9 +3650,10 @@
                 <span class="prompt-label">Prompt</span>
                 <button class="copy-btn" onclick="copyText(this)">Copy</button>
                 <div class="prompt-content">
-                  Open http://localhost:5173, follow a second
-                  participant's account, confirm their tweets appear in
-                  your home timeline, then unfollow and confirm they
+                  Open http://localhost:5173, click the empty search box
+                  and confirm it suggests up to 5 users to follow, follow a
+                  second participant's account, confirm their tweets appear
+                  in your home timeline, then unfollow and confirm they
                   drop out. Take a screenshot of both states.
                 </div>
               </div>
@@ -3691,6 +3682,10 @@
               Done when: unfollowing them removes their tweets from
               your home timeline
             </li>
+            <li onclick="toggleCheck(this)">
+              Done when: focusing the empty search box suggests up to 5
+              users to follow
+            </li>
           </ul>
 
           <button class="complete-btn" onclick="toggleComplete(this)">
@@ -3710,6 +3705,20 @@
           </button>
         </div>
       </article>
+
+      <!-- ============================================================
+         PART 4
+         ============================================================ -->
+      <div class="part-header">
+        <h2>Part 4: New Features</h2>
+        <p>
+          The composer, timeline, Search, and Follow/Unfollow all work now
+          &mdash; the rest of the room is live data, and you can find and
+          follow each other. Build Like &amp; Retweet next, then optional
+          stretch goals &mdash; Inline Reply and a Profile Page &mdash; and
+          finally an open-ended feature of your own choosing.
+        </p>
+      </div>
 
       <!-- Step 16 -->
       <article class="step-card" data-feature="16">
