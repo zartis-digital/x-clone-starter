@@ -2267,117 +2267,6 @@
           <div class="step-header-left">
             <span class="step-number">6</span>
             <div class="step-title-group">
-              <div class="step-title">Interview Requirements Skill</div>
-              <div class="step-desc">
-                A /interview-requirements skill that fleshes out feature
-                details before filing an issue
-              </div>
-            </div>
-          </div>
-          <div class="step-header-right">
-            <span class="step-time">~10 min</span>
-            <svg
-              class="chevron"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M6 9l6 6 6-6" />
-            </svg>
-          </div>
-        </div>
-        <div class="step-body">
-          <p>
-            Writing good requirements is a dialogue, not a monologue. This
-            skill does the product work directly in your main thread &mdash;
-            where it can actually ask you questions &mdash; so there's no
-            separate "product manager" agent to maintain.
-          </p>
-
-          <div class="prompt-box">
-            <span class="prompt-label">Prompt</span>
-            <button class="copy-btn" onclick="copyText(this)">Copy</button>
-            <div class="prompt-content">
-              I want to create a skill called interview-requirements that acts
-              as a product manager to flesh out a feature before filing an
-              issue. When I run /interview-requirements &lt;feature&gt;, it
-              should focus only on requirements and never implementation. It
-              should ask me 3-5 targeted questions using the AskUserQuestion
-              tool to clarify scope, target users, edge cases, acceptance
-              criteria, and priority. Then it should synthesize my answers
-              into a structured feature spec — a user story ("As a [user], I
-              want [goal] so that [benefit]"), acceptance criteria, edge
-              cases, and out-of-scope items — present it clearly, and ask me
-              whether I want to invoke /create-issue to save the spec to
-              docs/issues/.
-            </div>
-          </div>
-
-          <div class="callout">
-            <svg
-              class="callout-icon"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path
-                d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z"
-              />
-              <line x1="9" y1="21" x2="15" y2="21" />
-            </svg>
-            <span
-              >This is the product work, captured as a main-thread skill
-              rather than a delegated agent &mdash; which matters because a
-              subagent can't use <code>AskUserQuestion</code>, the tool that
-              lets Claude present structured choices and gather precise
-              answers interactively.</span
-            >
-          </div>
-
-          <ul class="checklist">
-            <li onclick="toggleCheck(this)">
-              Created
-              <code>.claude/skills/interview-requirements/SKILL.md</code>
-            </li>
-            <li onclick="toggleCheck(this)">
-              Ran <code>/interview-requirements</code> on a sample feature and
-              confirmed the spec output
-            </li>
-            <li onclick="toggleCheck(this)">
-              Persisted the issue via <code>/create-issue</code>
-            </li>
-          </ul>
-
-          <button class="complete-btn" onclick="toggleComplete(this)">
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M5 12l5 5L20 7" />
-            </svg>
-            Mark as Completed
-          </button>
-        </div>
-      </article>
-
-      <!-- Step 7 -->
-      <article class="step-card" data-feature="7">
-        <div class="step-header" onclick="toggleCard(this.parentElement)">
-          <div class="step-header-left">
-            <span class="step-number">7</span>
-            <div class="step-title-group">
               <div class="step-title">Create Issue Skill</div>
               <div class="step-desc">
                 A /create-issue slash command that saves issues to
@@ -2448,7 +2337,7 @@
             </svg>
             <span
               >A skill runs in the current conversation context. Anything
-              &mdash; you, the interview skill, or the QA agent &mdash; can
+              &mdash; you, the interview skill (next step), or the QA agent &mdash; can
               invoke <code>/create-issue</code> directly, making it a shared
               contract for the requirements workflow.</span
             >
@@ -2541,6 +2430,119 @@
             <li onclick="toggleCheck(this)">
               Documented the <code>docs/issues/</code> convention in
               <code>CLAUDE.md</code>
+            </li>
+          </ul>
+
+          <button class="complete-btn" onclick="toggleComplete(this)">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M5 12l5 5L20 7" />
+            </svg>
+            Mark as Completed
+          </button>
+        </div>
+      </article>
+
+      <!-- Step 7 -->
+      <article class="step-card" data-feature="7">
+        <div class="step-header" onclick="toggleCard(this.parentElement)">
+          <div class="step-header-left">
+            <span class="step-number">7</span>
+            <div class="step-title-group">
+              <div class="step-title">Interview Requirements Skill</div>
+              <div class="step-desc">
+                A /interview-requirements skill that fleshes out feature
+                details before filing an issue
+              </div>
+            </div>
+          </div>
+          <div class="step-header-right">
+            <span class="step-time">~10 min</span>
+            <svg
+              class="chevron"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </div>
+        </div>
+        <div class="step-body">
+          <p>
+            Writing good requirements is a dialogue, not a monologue. This
+            skill does the product work directly in your main thread &mdash;
+            where it can actually ask you questions &mdash; so there's no
+            separate "product manager" agent to maintain. It hands its spec
+            off to the <code>/create-issue</code> skill you built in the
+            previous step.
+          </p>
+
+          <div class="prompt-box">
+            <span class="prompt-label">Prompt</span>
+            <button class="copy-btn" onclick="copyText(this)">Copy</button>
+            <div class="prompt-content">
+              I want to create a skill called interview-requirements that acts
+              as a product manager to flesh out a feature before filing an
+              issue. When I run /interview-requirements &lt;feature&gt;, it
+              should focus only on requirements and never implementation. It
+              should ask me 3-5 targeted questions using the AskUserQuestion
+              tool to clarify scope, target users, edge cases, acceptance
+              criteria, and priority. Then it should synthesize my answers
+              into a structured feature spec — a user story ("As a [user], I
+              want [goal] so that [benefit]"), acceptance criteria, edge
+              cases, and out-of-scope items — present it clearly, and ask me
+              whether I want to invoke /create-issue to save the spec to
+              docs/issues/.
+            </div>
+          </div>
+
+          <div class="callout">
+            <svg
+              class="callout-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path
+                d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z"
+              />
+              <line x1="9" y1="21" x2="15" y2="21" />
+            </svg>
+            <span
+              >This is the product work, captured as a main-thread skill
+              rather than a delegated agent &mdash; which matters because a
+              subagent can't use <code>AskUserQuestion</code>, the tool that
+              lets Claude present structured choices and gather precise
+              answers interactively.</span
+            >
+          </div>
+
+          <ul class="checklist">
+            <li onclick="toggleCheck(this)">
+              Created
+              <code>.claude/skills/interview-requirements/SKILL.md</code>
+            </li>
+            <li onclick="toggleCheck(this)">
+              Ran <code>/interview-requirements</code> on a sample feature and
+              confirmed the spec output
+            </li>
+            <li onclick="toggleCheck(this)">
+              Persisted the issue via <code>/create-issue</code>
             </li>
           </ul>
 
