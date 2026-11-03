@@ -5,6 +5,8 @@ import { TanStackRouterVite } from "@tanstack/router-plugin/vite"
 import { defineConfig } from "vitest/config"
 import { loadEnv } from "vite"
 
+import { xbotPlugin } from "./vite-plugin-xbot"
+
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
   // Lets the proxy below target a deployed backend (e.g. the workshop's
@@ -23,6 +25,12 @@ export default defineConfig(({ mode }) => {
       TanStackRouterVite({ target: "react", autoCodeSplitting: true }),
       react(),
       tailwindcss(),
+      // Serves POST /__xbot/answer in dev only, by shelling out to the
+      // `claude` CLI you're already signed in to. That's what lets the
+      // @xbot assistant work with no API key — see the workshop's "Ask
+      // @xbot" step. The shared API stores @xbot's replies but never calls
+      // a model itself.
+      xbotPlugin(),
     ],
     resolve: {
       alias: {

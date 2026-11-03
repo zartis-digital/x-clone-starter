@@ -3722,8 +3722,9 @@
           The composer, timeline, Search, and Follow/Unfollow all work now
           &mdash; the rest of the room is live data, and you can find and
           follow each other. Build Like &amp; Retweet next, then optional
-          stretch goals &mdash; Inline Reply and a Profile Page &mdash; and
-          finally an open-ended feature of your own choosing.
+          stretch goals &mdash; Inline Reply and a Profile Page &mdash; then
+          &#64;xbot, an AI assistant account that answers you in the thread,
+          and finally an open-ended feature of your own choosing.
         </p>
       </div>
 
@@ -4085,6 +4086,244 @@
           <div class="step-header-left">
             <span class="step-number">19</span>
             <div class="step-title-group">
+              <div class="step-title">Ask &#64;xbot</div>
+              <div class="step-desc">
+                An AI assistant account that answers you in the thread
+              </div>
+            </div>
+          </div>
+          <div class="step-header-right">
+            <span class="step-time">~30 min</span>
+            <svg
+              class="chevron"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </div>
+        </div>
+        <div class="step-body">
+          <ol>
+            <li>
+              <strong>Context</strong> &mdash; The API has an assistant
+              account, <code>&#64;xbot</code>. Mention it in a tweet and it
+              should answer in the thread, like any other account would. Your
+              job is the frontend half.
+              <div class="callout">
+                <svg
+                  class="callout-icon"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z"
+                  />
+                  <line x1="9" y1="21" x2="15" y2="21" />
+                </svg>
+                <span
+                  >Build Inline Reply (step 18) first. &#64;xbot's answer is
+                  a reply, so without a reply list there's nowhere for it to
+                  show up.</span
+                >
+              </div>
+            </li>
+
+            <li>
+              <strong>Where the answer comes from</strong> &mdash; not the
+              API. The shared backend holds no API key and never calls a
+              model; it only stores what you send it. The answer is written
+              on your own machine, by the <code>claude</code> CLI you're
+              already signed in to. No key to configure, nothing to deploy
+              &mdash; but &#64;xbot only answers while your dev server is
+              running.
+              <div class="step-section">
+                <div class="step-section-title">Already in this repo</div>
+                <ul
+                  style="
+                    list-style: disc;
+                    padding-left: 24px;
+                    margin: 8px 0;
+                    font-size: 0.92rem;
+                    color: var(--text-secondary);
+                    line-height: 1.8;
+                  "
+                >
+                  <li>
+                    <code>vite-plugin-xbot.ts</code> &mdash; a dev-only Vite
+                    plugin serving
+                    <code>POST /__xbot/answer</code>. Send it
+                    <code>{ tweet, author }</code>, get back
+                    <code>{ content, source }</code>, where
+                    <code>source</code> is <code>"claude"</code> or
+                    <code>"fallback"</code>. It shells out to
+                    <code>claude -p</code> for you.
+                  </li>
+                  <li>
+                    <code>src/lib/xbot.ts</code> &mdash;
+                    <code>mentionsXbot()</code> and
+                    <code>isXbotTweet()</code>. The mention rule is
+                    <code>/(^|\s)&#64;xbot\b/i</code>, and the backend uses
+                    exactly the same one &mdash; don't invent your own or the
+                    two will disagree.
+                  </li>
+                </ul>
+              </div>
+            </li>
+
+            <li>
+              <strong>The endpoint</strong> &mdash;
+              <code>POST /api/tweets/:id/xbot-reply</code> with
+              <code>{ "content": "..." }</code> posts a reply authored by
+              &#64;xbot. It's in the
+              <a
+                href="https://workshops.zartis.com/x-clone-api/api/docs"
+                target="_blank"
+                rel="noopener"
+                >API docs</a
+              >
+              with the rest. Four rules worth knowing before you build
+              against it:
+              <ul
+                style="
+                  list-style: disc;
+                  padding-left: 24px;
+                  margin: 8px 0;
+                  font-size: 0.92rem;
+                  color: var(--text-secondary);
+                  line-height: 1.8;
+                "
+              >
+                <li>
+                  Only the tweet's author may call it &mdash;
+                  <code>403</code> otherwise. Nobody can make &#64;xbot say
+                  something under someone else's tweet.
+                </li>
+                <li>
+                  The tweet must mention &#64;xbot &mdash;
+                  <code>400</code> if it doesn't.
+                </li>
+                <li>
+                  One answer per mention &mdash; asking again for the same
+                  tweet gets <code>409</code>. Treat that as "already
+                  answered", not as an error.
+                </li>
+                <li>
+                  Mentioning &#64;xbot in a reply works too, and continues
+                  the thread. Replies are single-level, so the answer is
+                  posted as that reply's <em>sibling</em> &mdash; same
+                  thread, next message. The API works this out from the id
+                  you pass; you don't send a parent.
+                </li>
+              </ul>
+            </li>
+
+            <li>
+              <strong>Build it</strong> &mdash; the flow is: post the tweet,
+              ask the local plugin for an answer, send that answer to the
+              endpoint, show it in the thread.
+              <div class="prompt-box">
+                <span class="prompt-label">Prompt</span>
+                <button class="copy-btn" onclick="copyText(this)">Copy</button>
+                <div class="prompt-content">
+                  Wire up the &#64;xbot assistant. Read vite-plugin-xbot.ts
+                  and src/lib/xbot.ts first - the local brain and the mention
+                  rule already exist, don't rewrite them. When I post a tweet
+                  OR a reply whose text mentions &#64;xbot, POST { tweet,
+                  author, thread } to /__xbot/answer - thread is the
+                  conversation so far, oldest first, so follow-up questions
+                  make sense - then POST { content } to
+                  /api/tweets/:id/xbot-reply using the id of the tweet that
+                  mentioned it, then show the answer in that thread. Only the
+                  tweet's author may call that endpoint. Treat 409 as
+                  "already answered" and a failed call to /__xbot/answer as
+                  "&#64;xbot is asleep" - show a quiet message, never an
+                  error, and never post a placeholder reply to the shared
+                  API. The answer takes 10-30 seconds, so show that something
+                  is happening. Also highlight a valid &#64;xbot mention
+                  while I type, so I can see a typo like "hi&#64;xbot" won't
+                  summon it.
+                </div>
+              </div>
+            </li>
+
+            <li>
+              <strong>Try it</strong> &mdash; post
+              <code>&#64;xbot what is optimistic UI?</code> and wait. The
+              answer arrives as a reply from &#64;xbot a few seconds later.
+              Then reply in that thread with
+              <code>&#64;xbot and the downside?</code> &mdash; it should
+              answer again, knowing what was already said.
+              <div class="callout">
+                <svg
+                  class="callout-icon"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z"
+                  />
+                  <line x1="9" y1="21" x2="15" y2="21" />
+                </svg>
+                <span
+                  >Got a canned reply about running on vibes? That's
+                  <code>source: "fallback"</code> &mdash; the plugin couldn't
+                  run <code>claude</code>. Check your dev server's terminal:
+                  it logs the reason on the <code>[xbot]</code> line.</span
+                >
+              </div>
+            </li>
+
+            <li>
+              <strong>Take it further</strong> &mdash; optional, if you have
+              time.
+              <ul
+                style="
+                  list-style: disc;
+                  padding-left: 24px;
+                  margin: 8px 0;
+                  font-size: 0.92rem;
+                  color: var(--text-secondary);
+                  line-height: 1.8;
+                "
+              >
+                <li>
+                  Give &#64;xbot the thread for context, not just the one
+                  tweet &mdash; the plugin decides what reaches the prompt.
+                </li>
+                <li>
+                  Show &#64;xbot's replies differently in the timeline, the
+                  way a verified or automated account is marked.
+                </li>
+                <li>
+                  Add an "Ask &#64;xbot" button for a tweet of yours that
+                  mentions it but never got an answer &mdash; the dev server
+                  was down, say.
+                </li>
+              </ul>
+            </li>
+          </ol>
+        </div>
+      </article>
+
+      <!-- Step 20 -->
+      <article class="step-card" data-feature="20">
+        <div class="step-header" onclick="toggleCard(this.parentElement)">
+          <div class="step-header-left">
+            <span class="step-number">20</span>
+            <div class="step-title-group">
               <div class="step-title">
                 Make It Yours
                 <span class="badge badge-bonus" style="margin-left: 8px"
@@ -4263,6 +4502,8 @@
           </button>
         </div>
       </article>
+
+
 
       <!-- ============================================================
          PART 5
