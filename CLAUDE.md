@@ -41,6 +41,23 @@ src/frontend/src/
   `src/frontend/.env.example` and `src/frontend/vite.config.ts`'s `/api` proxy) — never hardcode
   the API origin in application code.
 
+## The @xbot assistant
+
+- `@xbot` is an assistant account on the shared API. Mentioning it in a tweet
+  (`/(^|\s)@xbot\b/i` — the rule lives in `src/frontend/src/lib/xbot.ts`, and the backend uses
+  the same one) means it should answer in that tweet's thread.
+- `POST /api/tweets/:id/xbot-reply` with `{ content }` posts a reply as `@xbot`, where `:id` is
+  the tweet that mentioned it. Only that tweet's author may call it (`403`), it must mention
+  `@xbot` (`400`), and each mention is answered once (`409` after that).
+- A mention inside a reply continues the thread: replies are single-level, so the answer is
+  posted as that reply's **sibling** under the same original tweet. The API derives the parent
+  itself — callers never send one.
+- **The API never calls a model** — it only stores the answer. The answer itself is written
+  locally by `vite-plugin-xbot.ts`, a dev-only Vite plugin that serves `POST /__xbot/answer`
+  by shelling out to the `claude` CLI. So the feature needs no API key, and `@xbot` goes quiet
+  when the dev server isn't running. A failed call to `/__xbot/answer` means "@xbot is asleep":
+  show a quiet message, never post a placeholder reply to the shared API.
+
 ## Workshop note
 
 - The API is shared by everyone in the room. When testing in the browser (including via
